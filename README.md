@@ -121,7 +121,7 @@ model_list:
   - model_name: r1
     litellm_params:
       model: deepseek-reasoner
-      api_key: ${OPENAI_API_KEY}
+      api_key: ${DS_API_KEY}
 
 litellm_settings:
   drop_params: true
