@@ -2,6 +2,9 @@ import asyncio
 import logging
 import re
 from argparse import ArgumentParser
+from dotenv import load_dotenv
+load_dotenv()
+
 
 from ii_researcher.pipeline.agent import DeepSearchAgent
 from ii_researcher.reasoning.agent import ReasoningAgent
