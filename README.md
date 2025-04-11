@@ -32,14 +32,22 @@ https://github.com/user-attachments/assets/2c1542f0-0e1b-44d5-8fc5-0446a07b3821
 
 ## 🛠️ Installation and Setup
 
-### 1. Clone the repository:
+### Option 1: Install from PyPI
+
+```bash
+pip install ii-researcher
+```
+
+### Option 2: Install from Source
+
+#### 1. Clone the repository:
 
 ```bash
 git clone https://github.com/Intelligent-Internet/ii-researcher.git
 cd ii-researcher
 ```
 
-### 2. Install the package in development mode:
+#### 2. Install the package in development mode:
 
 ```bash
 pip install -e .
