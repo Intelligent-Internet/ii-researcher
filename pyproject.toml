@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ii-researcher"
-version = "0.1.0"
+version = "0.1.0.dev1"
 description = "II Researcher Package"
 authors = [
     {name = "Intelligent Internet", email = "emad@ii.inc"},
@@ -52,6 +52,7 @@ dev = [
 
 [tool.setuptools]
 include-package-data = true
+packages.find.exclude = ["api.py"]
 
 [tool.setuptools.package-dir]
 "" = "."
