@@ -28,6 +28,11 @@ class WebScraperTool(BaseTool):
     # Set to store already visited URLs
     _visited_urls = set()
 
+    @classmethod
+    def reset(cls) -> None:
+        """Reset the set of visited URLs."""
+        cls._visited_urls = set()
+
     async def execute(self, tool_history: ToolHistory = None, **kwargs) -> str:
         """Execute the web scraper."""
         urls = kwargs.get("urls", [])
@@ -99,8 +104,3 @@ class WebScraperTool(BaseTool):
         except Exception as e:
             logging.error("Unexpected error while scraping URL '%s': %s", url, str(e))
             return f"Unexpected error while scraping URL '{url}': {str(e)}\n"
-
-    @classmethod
-    def reset_visited_urls(cls) -> None:
-        """Reset the set of visited URLs."""
-        cls._visited_urls = set()

@@ -15,8 +15,6 @@ from ii_researcher.reasoning.tools.registry import (
     get_all_tools,
     get_tool,
 )
-from ii_researcher.reasoning.tools.web_scraper import WebScraperTool
-from ii_researcher.reasoning.tools.web_search import WebSearchTool
 
 
 class ReasoningAgent:
@@ -50,9 +48,8 @@ class ReasoningAgent:
             available_tools=available_tools,
         )
 
-        # Reset tool states
-        WebScraperTool.reset_visited_urls()
-        WebSearchTool.reset_searched_queries()
+        for tool in get_all_tools().values():
+            tool.reset()
 
         logging.info("ReasoningAgent initialized with question: %s", question)
 
