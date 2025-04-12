@@ -27,6 +27,11 @@ class WebSearchTool(BaseTool):
     # Set to store already searched queries
     _searched_queries = set()
 
+    @classmethod
+    def reset(cls) -> None:
+        """Reset the set of searched queries."""
+        cls._searched_queries = set()
+
     async def execute(self, tool_history: ToolHistory = None, **kwargs) -> str:
         """Execute the web search."""
         queries = kwargs.get("queries", [])
@@ -75,8 +80,3 @@ class WebSearchTool(BaseTool):
                 result_str += f"Error searching for '{query}': {str(e)}\n"
 
         return result_str
-
-    @classmethod
-    def reset_searched_queries(cls) -> None:
-        """Reset the set of searched queries."""
-        cls._searched_queries = set()

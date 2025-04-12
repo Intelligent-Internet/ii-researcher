@@ -17,6 +17,12 @@ class BaseTool(ABC):
     async def execute(self, tool_history: ToolHistory = None, **kwargs) -> str:
         """Execute the tool with the given arguments."""
 
+    @classmethod
+    @abstractmethod
+    def reset(cls) -> None:
+        """Reset Tool State"""
+        pass
+
     async def execute_stream(self,
                              stream_event: Callable[[str, Dict[str, Any]], None],
                              tool_history: ToolHistory = None,
