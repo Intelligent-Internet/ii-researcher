@@ -2,8 +2,8 @@ import asyncio
 from datetime import datetime
 from typing import List
 
-from baml_client.async_client import b
-from baml_client.types import Answer, EvaluationType
+from ii_researcher_legacy.baml_client.async_client import b
+from ii_researcher_legacy.baml_client.types import Answer, EvaluationType
 from ii_researcher_legacy.ii_researcher.config import SCRAPE_URL_TIMEOUT
 from ii_researcher_legacy.ii_researcher.pipeline.schemas import (
     AttributionAnalysis,

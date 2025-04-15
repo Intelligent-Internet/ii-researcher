@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict
 
-from baml_client.types import KnowledgeItem
+from ii_researcher_legacy.baml_client.types import KnowledgeItem
 from ii_researcher_legacy.ii_researcher.events import Event
 from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB
 from ii_researcher_legacy.ii_researcher.pipeline.state import ActionState

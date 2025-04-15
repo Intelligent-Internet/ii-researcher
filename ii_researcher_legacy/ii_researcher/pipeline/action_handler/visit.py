@@ -2,8 +2,8 @@ import asyncio
 import logging
 from typing import Any, Dict
 
-from baml_client.async_client import b
-from baml_client.types import KnowledgeItem, KnowledgeType, Visit
+from ii_researcher_legacy.baml_client.async_client import b
+from ii_researcher_legacy.baml_client.types import KnowledgeItem, KnowledgeType, Visit
 from ii_researcher_legacy.ii_researcher.events import Event
 from ii_researcher_legacy.ii_researcher.pipeline.action_handler.base import ActionHandler
 from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB

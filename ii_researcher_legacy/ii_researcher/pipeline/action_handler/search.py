@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from baml_client.async_client import b
-from baml_client.types import KnowledgeItem, KnowledgeType, Search
+from ii_researcher_legacy.baml_client.async_client import b
+from ii_researcher_legacy.baml_client.types import KnowledgeItem, KnowledgeType, Search
 from ii_researcher_legacy.ii_researcher.config import SEARCH_PROVIDER, SEARCH_QUERY_TIMEOUT
 from ii_researcher_legacy.ii_researcher.events import Event
 from ii_researcher_legacy.ii_researcher.pipeline.action_handler.base import ActionHandler

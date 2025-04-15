@@ -4,12 +4,12 @@ from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from baml_client.types import Answer  # noqa
-from baml_client.types import Reflect  # noqa
-from baml_client.types import Search  # noqa
-from baml_client.types import Visit  # noqa
+from ii_researcher_legacy.baml_client.types import Answer  # noqa
+from ii_researcher_legacy.baml_client.types import Reflect  # noqa
+from ii_researcher_legacy.baml_client.types import Search  # noqa
+from ii_researcher_legacy.baml_client.types import Visit  # noqa
 
-from baml_client.types import (
+from ii_researcher_legacy.baml_client.types import (
     ActionWithThink,
     AlternativeSearchResult,
     EvaluationType,

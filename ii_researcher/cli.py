@@ -49,9 +49,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(
-        main(
-            question=args.question,
-            save_report=args.save_report,
-            is_stream=args.stream,
-        ))
+    asyncio.run(main(
+        question=args.question,
+        save_report=args.save_report,
+        is_stream=args.stream,
+    ))

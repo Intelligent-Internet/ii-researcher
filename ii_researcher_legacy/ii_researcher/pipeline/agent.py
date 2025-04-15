@@ -8,8 +8,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Callable, Dict, Optional
 
-from baml_client.async_client import b
-from baml_client.types import Answer, KnowledgeType, Reflect, Search, Visit
+from ii_researcher_legacy.baml_client.async_client import b
+from ii_researcher_legacy.baml_client.types import Answer, KnowledgeType, Reflect, Search, Visit
 from ii_researcher_legacy.ii_researcher.config import (
     SCRAPE_URL_TIMEOUT,
     SEARCH_PROCESS_TIMEOUT,

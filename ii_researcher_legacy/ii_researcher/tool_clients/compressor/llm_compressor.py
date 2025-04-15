@@ -1,7 +1,7 @@
 from typing import List
 
-from baml_client.async_client import b
-from baml_client.types import Passage
+from ii_researcher_legacy.baml_client.async_client import b
+from ii_researcher_legacy.baml_client.types import Passage
 
 from .base import Compressor
 
