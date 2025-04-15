@@ -1,7 +1,6 @@
 from typing import List
 
-from ii_researcher.reasoning.clients.compressor_client import extract_relevant_segments
-from ii_researcher.reasoning.clients.compressor_client import Passage
+from ii_researcher.tool_clients.compressor.compressor_client import extract_relevant_segments, Passage
 
 from .base import Compressor
 
