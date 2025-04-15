@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from ii_researcher.reasoning.agent import ReasoningAgent
+from ii_researcher_legacy.ii_researcher.pipeline.agent import DeepSearchAgent
 
 
 async def main(
@@ -21,10 +21,9 @@ async def main(
         print(token, end="", flush=True)
 
     # Initialize and run the appropriate agent based on the mode
-    agent = ReasoningAgent(question=question)
-    result = await agent.run(on_token=on_token, is_stream=is_stream)
+    agent = DeepSearchAgent()
+    result = await agent.search(question, max_steps=30)
 
-    # Save the result if requested
     if save_report:
         result_file = re.sub(r"[^a-zA-Z0-9]", "_", question)[:100] + ".md"
         with open(result_file, "w") as f:

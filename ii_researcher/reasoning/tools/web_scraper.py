@@ -5,7 +5,7 @@ from ii_researcher.reasoning.tools.base import BaseTool
 from ii_researcher.reasoning.tools.registry import register_tool
 from ii_researcher.reasoning.tools.tool_history import ToolHistory
 # Import the original tool implementation
-from ii_researcher.tools.web_scraper_compressor import WebScraperCompressor
+from ii_researcher.tool_clients.scrape_client import ScrapeClient
 
 
 @register_tool
@@ -79,7 +79,7 @@ class WebScraperTool(BaseTool):
     async def _scrape_url(self, url: str, question: str) -> str:
         """Scrape a single URL."""
         try:
-            scrape_tool = WebScraperCompressor(query=question)
+            scrape_tool = ScrapeClient(query=question)
             result = await scrape_tool.scrape(url)
 
             # Remove raw content to reduce response size

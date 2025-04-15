@@ -4,17 +4,17 @@ from typing import Any, Dict
 
 from baml_client.async_client import b
 from baml_client.types import KnowledgeItem, KnowledgeType, Visit
-from ii_researcher.events import Event
-from ii_researcher.pipeline.action_handler.base import ActionHandler
-from ii_researcher.pipeline.schemas import ActionWithThinkB
-from ii_researcher.tools.web_scraper_compressor import WebScraperCompressor
-from ii_researcher.utils.prompt import (
+from ii_researcher_legacy.ii_researcher.events import Event
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.base import ActionHandler
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB
+from ii_researcher_legacy.ii_researcher.tool_clients.scrape_client import ScrapeClient
+from ii_researcher_legacy.ii_researcher.utils.prompt import (
     VISIT_DUPLICATE_PROMPT,
     VISIT_FAIL_PROMPT,
     VISIT_SUCCESS_PROMPT,
 )
-from ii_researcher.utils.text_tools import choose_k, remove_all_line_breaks
-from ii_researcher.utils.url_tools import normalize_url
+from ii_researcher_legacy.ii_researcher.utils.text_tools import choose_k, remove_all_line_breaks
+from ii_researcher_legacy.ii_researcher.utils.url_tools import normalize_url
 
 
 class VisitHandler(ActionHandler):
@@ -71,7 +71,7 @@ class VisitHandler(ActionHandler):
         try:
             display_url = self.state.get_display_url(url)
 
-            scrape_tool = WebScraperCompressor(query=self.state.all_urls[url]["query"])
+            scrape_tool = ScrapeClient(query=self.state.all_urls[url]["query"])
 
             try:
                 response = await asyncio.wait_for(

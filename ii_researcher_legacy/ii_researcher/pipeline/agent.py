@@ -10,22 +10,22 @@ from typing import Any, Callable, Dict, Optional
 
 from baml_client.async_client import b
 from baml_client.types import Answer, KnowledgeType, Reflect, Search, Visit
-from ii_researcher.config import (
+from ii_researcher_legacy.ii_researcher.config import (
     SCRAPE_URL_TIMEOUT,
     SEARCH_PROCESS_TIMEOUT,
     SEARCH_PROVIDER,
     SEARCH_QUERY_TIMEOUT,
     STEP_SLEEP,
 )
-from ii_researcher.events import Event
-from ii_researcher.pipeline.action_handler.answer import AnswerHandler
-from ii_researcher.pipeline.action_handler.reflect import ReflectHandler
-from ii_researcher.pipeline.action_handler.search import SearchHandler
-from ii_researcher.pipeline.action_handler.visit import VisitHandler
-from ii_researcher.pipeline.evaluator import evaluate_question
-from ii_researcher.pipeline.schemas import ActionWithThinkB
-from ii_researcher.pipeline.state import ActionState, AgentState
-from ii_researcher.utils.url_tools import get_unvisited_urls
+from ii_researcher_legacy.ii_researcher.events import Event
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.answer import AnswerHandler
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.reflect import ReflectHandler
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.search import SearchHandler
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.visit import VisitHandler
+from ii_researcher_legacy.ii_researcher.pipeline.evaluator import evaluate_question
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB
+from ii_researcher_legacy.ii_researcher.pipeline.state import ActionState, AgentState
+from ii_researcher_legacy.ii_researcher.utils.url_tools import get_unvisited_urls
 
 
 @dataclass
@@ -124,6 +124,8 @@ class DeepSearchAgent:
         )
         # Convert ActionWithThink to a dictionary first, then create ActionWithThinkB
         action_dict = action_with_think.model_dump()
+        print("ACTION START")
+        print(action_dict)
         action_with_think = ActionWithThinkB(**action_dict)
 
         return action_with_think

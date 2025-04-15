@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
 from baml_client.types import EvaluationType, KnowledgeItem, KnowledgeType
-from ii_researcher.pipeline.schemas import Reference, SearchResult  # noqa
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import Reference, SearchResult  # noqa
 
 
 @dataclass

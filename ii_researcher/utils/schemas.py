@@ -4,18 +4,12 @@ from typing import Any, Dict, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from baml_client.types import Answer  # noqa
-from baml_client.types import Reflect  # noqa
-from baml_client.types import Search  # noqa
-from baml_client.types import Visit  # noqa
 from baml_client.types import (
     ActionWithThink,
     AlternativeSearchResult,
     EvaluationType,
     StandardSearchResult,
 )
-
-
 class ActionWithThinkB(ActionWithThink):
     is_final: bool | None = None
 

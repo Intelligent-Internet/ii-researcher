@@ -1,9 +1,9 @@
 from baml_client.async_client import b
 from baml_client.types import Reflect
-from ii_researcher.pipeline.action_handler.base import ActionHandler
-from ii_researcher.pipeline.schemas import ActionWithThinkB
-from ii_researcher.utils.prompt import REFLECT_DUPLICATE_PROMPT, REFLECT_SUCCESS_PROMPT
-from ii_researcher.utils.text_tools import choose_k
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.base import ActionHandler
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB
+from ii_researcher_legacy.ii_researcher.utils.prompt import REFLECT_DUPLICATE_PROMPT, REFLECT_SUCCESS_PROMPT
+from ii_researcher_legacy.ii_researcher.utils.text_tools import choose_k
 
 
 class ReflectHandler(ActionHandler):

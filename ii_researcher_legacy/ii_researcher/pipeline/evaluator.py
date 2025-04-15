@@ -4,15 +4,15 @@ from typing import List
 
 from baml_client.async_client import b
 from baml_client.types import Answer, EvaluationType
-from ii_researcher.config import SCRAPE_URL_TIMEOUT
-from ii_researcher.pipeline.schemas import (
+from ii_researcher_legacy.ii_researcher.config import SCRAPE_URL_TIMEOUT
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import (
     AttributionAnalysis,
     CompletenessAnalysis,
     EvaluationResponse,
     FreshnessAnalysis,
     PluralityAnalysis,
 )
-from ii_researcher.tools.web_scraper_compressor import WebScraperCompressor
+from ii_researcher_legacy.ii_researcher.tool_clients.scrape_client import ScrapeClient
 
 
 async def evaluate_answer(
@@ -169,7 +169,7 @@ async def fetch_source_content(urls: List[str], question: str) -> str:
     if not urls:
         return ""
 
-    scrape_tool = WebScraperCompressor(query=question)
+    scrape_tool = ScrapeClient(query=question)
 
     async def scrape(url):
         try:

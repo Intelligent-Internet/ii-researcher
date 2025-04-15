@@ -3,14 +3,14 @@ import logging
 
 from baml_client.async_client import b
 from baml_client.types import KnowledgeItem, KnowledgeType, Search
-from ii_researcher.config import SEARCH_PROVIDER, SEARCH_QUERY_TIMEOUT
-from ii_researcher.events import Event
-from ii_researcher.pipeline.action_handler.base import ActionHandler
-from ii_researcher.pipeline.schemas import ActionWithThinkB
-from ii_researcher.tools.read import WebSearchTool
-from ii_researcher.utils.prompt import SEARCH_DUPLICATE_PROMPT, SEARCH_SUCCESS_PROMPT
-from ii_researcher.utils.text_tools import choose_k
-from ii_researcher.utils.url_tools import normalize_url
+from ii_researcher_legacy.ii_researcher.config import SEARCH_PROVIDER, SEARCH_QUERY_TIMEOUT
+from ii_researcher_legacy.ii_researcher.events import Event
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.base import ActionHandler
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB
+from ii_researcher_legacy.ii_researcher.tool_clients.search_client import SearchClient
+from ii_researcher_legacy.ii_researcher.utils.prompt import SEARCH_DUPLICATE_PROMPT, SEARCH_SUCCESS_PROMPT
+from ii_researcher_legacy.ii_researcher.utils.text_tools import choose_k
+from ii_researcher_legacy.ii_researcher.utils.url_tools import normalize_url
 
 
 class SearchHandler(ActionHandler):
@@ -80,7 +80,7 @@ class SearchHandler(ActionHandler):
         logging.info("Search query: %s", query)
 
         try:
-            search_tool = WebSearchTool(
+            search_tool = SearchClient(
                 query=query,
                 max_results=self.state.config.max_website_per_query,
                 search_provider=SEARCH_PROVIDER,

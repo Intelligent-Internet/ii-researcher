@@ -1,15 +1,15 @@
 from baml_client.async_client import b
 from baml_client.types import Answer, KnowledgeItem, KnowledgeType
-from ii_researcher.events import Event
-from ii_researcher.pipeline.action_handler.base import ActionHandler
-from ii_researcher.pipeline.evaluator import evaluate_answer
-from ii_researcher.pipeline.schemas import ActionWithThinkB, Reference
-from ii_researcher.utils.prompt import (
+from ii_researcher_legacy.ii_researcher.events import Event
+from ii_researcher_legacy.ii_researcher.pipeline.action_handler.base import ActionHandler
+from ii_researcher_legacy.ii_researcher.pipeline.evaluator import evaluate_answer
+from ii_researcher_legacy.ii_researcher.pipeline.schemas import ActionWithThinkB, Reference
+from ii_researcher_legacy.ii_researcher.utils.prompt import (
     ANSWER_BAD_PROMPT,
     ANSWER_GOOD_PROMPT,
     ANSWER_SUBQUESTION_PROMPT,
 )
-from ii_researcher.utils.text_tools import choose_k
+from ii_researcher_legacy.ii_researcher.utils.text_tools import choose_k
 
 
 class AnswerHandler(ActionHandler):

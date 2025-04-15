@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from ii_researcher.pipeline.agent import DeepSearchAgent
+from ii_researcher_legacy.ii_researcher.pipeline.agent import DeepSearchAgent
 from ii_researcher.reasoning.agent import ReasoningAgent
 from ii_researcher.utils.stream import StreamManager
 
