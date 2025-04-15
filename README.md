@@ -181,19 +181,11 @@ EOL
 
 Run the deep search agent with your question:
 
-There are two modes:
-
-- **Pipeline Mode**: This mode is suitable for general questions and tasks.
-
 ```bash
-python ii_researcher/cli.py --question "your question here"
+python ii_researcher/cli.py --question "your question here" --stream
 ```
 
-- **Reasoning Mode**: This mode is suitable for complex questions and tasks.
-
-```bash
-python ii_researcher/cli.py --question "your question here" --use-reasoning --stream
-```
+Note: The legacy pipeline mode is still available in `ii_researcher_legacy` but is no longer recommended for use.
 
 ### Using MCP
 
