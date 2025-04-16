@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from typing import Any, Callable, Dict, Optional, Tuple
 
-from ii_researcher.reasoning.clients.report import ReportBuilder
+from ii_researcher.reasoning.builders.report import ReportBuilder
 from ii_researcher.reasoning.tools.tool_history import ToolHistory
 from ii_researcher.reasoning.clients.openai_client import OpenAIClient
 from ii_researcher.reasoning.config import get_config, update_config
