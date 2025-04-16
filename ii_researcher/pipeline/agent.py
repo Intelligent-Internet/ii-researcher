@@ -27,6 +27,10 @@ from ii_researcher.pipeline.schemas import ActionWithThinkB
 from ii_researcher.pipeline.state import ActionState, AgentState
 from ii_researcher.utils.url_tools import get_unvisited_urls
 
+import warnings
+
+warnings.warn("This module is deprecated", DeprecationWarning)
+
 
 @dataclass
 class AgentConfig:

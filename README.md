@@ -1,3 +1,5 @@
+*Deprecation Notice:* This branch supports pipeline mode in ii-researcher and is no longer in active development
+
 # II-Researcher
 
 ![ii_researcher](https://github.com/user-attachments/assets/966dd403-fd73-4829-9d87-3878ecf025b1)
