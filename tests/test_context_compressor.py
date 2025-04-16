@@ -3,8 +3,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from ii_researcher.tools.compressor.base import Compressor
-from ii_researcher.tools.compressor.context_compressor import ContextCompressor
+from ii_researcher.tool_clients.compressor.base import Compressor
+from ii_researcher.tool_clients.compressor.context_compressor import ContextCompressor
 
 
 class MockCompressor(Compressor):

@@ -6,7 +6,7 @@ import requests
 from tavily import TavilyClient
 
 
-class WebSearchTool:
+class SearchClient:
     """A class that provides web search capabilities using different search providers."""
 
     def __init__(self, query=None, max_results=10, search_provider="tavily"):

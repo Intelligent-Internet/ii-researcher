@@ -3,7 +3,7 @@ import json
 import time
 from typing import Any, Dict
 
-from ii_researcher.pipeline.schemas import EventMessage
+from .schemas import EventMessage
 
 
 class StreamManager:

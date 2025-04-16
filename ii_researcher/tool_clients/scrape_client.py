@@ -8,7 +8,7 @@ from ii_researcher.config import (
     SCRAPER_PROVIDER,
     USE_LLM_COMPRESSOR,
 )
-from ii_researcher.tools.compressor import (
+from ii_researcher.tool_clients.compressor import (
     ContextCompressor,
     EmbeddingCompressor,
     LLMCompressor,
@@ -17,11 +17,11 @@ from ii_researcher.tools.compressor import (
 from .scraper import Scraper
 
 
-class WebScraperCompressor:
+class ScrapeClient:
 
     def __init__(self, query, cfg=None, context_compressor=None):
         """
-        Initialize the WebScraperCompressor
+        Initialize the ScrapeClient
         Args:
             query: str
             cfg: Config (optional)
