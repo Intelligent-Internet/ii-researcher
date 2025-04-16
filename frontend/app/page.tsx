@@ -30,7 +30,7 @@ export default function Home() {
       };
     };
   }>({});
-  const [modelType, setModelType] = useState("reasoning");
+  const modelType = "reasoning";
 
   const handleSubmit = () => {
     if (!question.trim()) return;
@@ -223,8 +223,6 @@ export default function Home() {
               setQuestion={setQuestion}
               handleKeyDown={handleKeyDown}
               handleSubmit={handleSubmit}
-              modelType={modelType}
-              setModelType={setModelType}
             />
           ) : (
             <motion.div
