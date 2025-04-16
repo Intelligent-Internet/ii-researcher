@@ -3,7 +3,7 @@ import re
 import urllib.parse
 
 import requests
-from tavily import TavilyClient
+from tavily import TavilyClient, MissingAPIKeyError, InvalidAPIKeyError
 
 
 class SearchClient:
@@ -25,14 +25,21 @@ class SearchClient:
     def _search_query_by_tavily(self, query, max_results=10):
         """Searches the query using Tavily API."""
         tavily_api_key = os.environ.get("TAVILY_API_KEY")
-        client = TavilyClient(tavily_api_key)
-        response = client.search(
-            query=query,
-            max_results=max_results,
-            include_raw_content=True,
-            # search_depth="advanced",
-        )
-        return response.get("results", [])
+        try:
+            client = TavilyClient(tavily_api_key)
+            response = client.search(
+                query=query,
+                max_results=max_results,
+                include_raw_content=True,
+                # search_depth="advanced",
+            )
+            return response.get("results", [])
+        except (MissingAPIKeyError, InvalidAPIKeyError) as e:
+            print(f"API Key Error: {e}. Failed fetching sources from Tavily.")
+            return []
+        except Exception as e:
+            print(f"Unexpected error: {e}. Failed fetching sources from Tavily.")
+            return []
 
     def _search_query_by_serp_api(self, query, max_results=10):
         """Searches the query using SerpAPI."""

@@ -7,7 +7,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from ii_researcher_legacy.ii_researcher.pipeline.agent import DeepSearchAgent
 from ii_researcher.reasoning.agent import ReasoningAgent
 from ii_researcher.utils.stream import StreamManager
 
@@ -46,24 +45,18 @@ async def stream_generator(
     stream_manager = StreamManager()
 
     search_task = None
-    if is_reasoning:
-        reasoning_agent = ReasoningAgent(
-            question=question, stream_event=stream_manager.create_event_message
+    reasoning_agent = ReasoningAgent(
+        question=question, stream_event=stream_manager.create_event_message
+    )
+
+    def handle_token(token):
+        return asyncio.create_task(
+            handle_reasoning_event(stream_manager.create_event_message, token)
         )
 
-        def handle_token(token):
-            return asyncio.create_task(
-                handle_reasoning_event(stream_manager.create_event_message, token)
-            )
-
-        search_task = asyncio.create_task(
-            reasoning_agent.run(on_token=handle_token, is_stream=True)
-        )
-    else:
-        agent = DeepSearchAgent(stream_event=stream_manager.create_event_message)
-        search_task = asyncio.create_task(
-            agent.search(question=question, max_steps=max_steps)
-        )
+    search_task = asyncio.create_task(
+        reasoning_agent.run(on_token=handle_token, is_stream=True)
+    )
 
     try:
         while True:
