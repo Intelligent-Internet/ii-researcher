@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ii-researcher"
-version = "0.1.5dev4"
+version = "0.1.5dev5"
 description = "II Researcher Package"
 authors = [
     {name = "Intelligent Internet", email = "emad@ii.inc"},
