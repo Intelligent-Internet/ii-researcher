@@ -6,7 +6,7 @@ from ii_researcher.reasoning.tools.registry import register_tool
 from ii_researcher.reasoning.tools.tool_history import ToolHistory
 
 # Import the original tool implementation
-from ii_researcher.tools.read import WebSearchTool as OriginalWebSearchTool
+from ii_researcher.tool_clients.search_client import SearchClient
 
 
 @register_tool
@@ -55,7 +55,7 @@ class WebSearchTool(BaseTool):
                 self._searched_queries.add(query)
 
                 # Perform the search
-                search_tool = OriginalWebSearchTool(
+                search_tool = SearchClient(
                     query=query,
                     max_results=config.tool.max_search_results,
                     search_provider=config.tool.search_provider,
