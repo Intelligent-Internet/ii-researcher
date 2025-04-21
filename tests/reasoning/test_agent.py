@@ -106,7 +106,7 @@ async def test_agent_with_streaming():
         async def mock_generate_report(*args, **kwargs):
             return "Mock final report"
 
-        mock_report_instance.generate_advance_report_stream = mock_generate_report
+        mock_report_instance.generate_stream = mock_generate_report
         mock_report_builder.return_value = mock_report_instance
 
         # Run the agent

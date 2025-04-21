@@ -1,8 +1,9 @@
 import asyncio
 import logging
 import json
-
+from enum import Enum
 from pydantic import BaseModel
+
 from typing import Any, Callable, Dict, List, Optional
 
 from openai import OpenAI, AsyncOpenAI
@@ -10,6 +11,11 @@ from openai import OpenAI, AsyncOpenAI
 from ii_researcher.reasoning.config import get_report_config
 from ii_researcher.reasoning.models.trace import Trace
 from ii_researcher.reasoning.tools.tool_history import ToolHistory
+
+
+class ReportType(Enum):
+    BASIC = "basic"
+    ADVANCED = "advanced"
 
 
 class Subtopics(BaseModel):
@@ -29,6 +35,28 @@ class ReportBuilder:
             base_url=self.config.llm.base_url,
         )
         self.stream_event = stream_event
+
+    def generate(self, tool_history: ToolHistory, trace: Trace, report_type: ReportType) -> str:
+        if report_type == ReportType.BASIC:
+            return self.generate_report(trace)
+        elif report_type == ReportType.ADVANCED:
+            return self.generate_advance_report(tool_history, trace)
+        else:
+            raise ValueError(f"Invalid report type: {report_type}")
+
+    async def generate_stream(self,
+                              tool_history: ToolHistory,
+                              trace: Trace,
+                              report_type: ReportType,
+                              callback: Optional[Callable[[str], None]] = None) -> str:
+        if report_type == ReportType.BASIC:
+            print("Generating basic report stream in generate_stream")
+            return await self.generate_report_stream(trace, callback)
+        elif report_type == ReportType.ADVANCED:
+            print("Generating advanced report stream in generate_stream")
+            return await self.generate_advance_report_stream(tool_history, trace, callback)
+        else:
+            raise ValueError(f"Invalid report type: {report_type}")
 
     def generate_report(self, trace: Trace) -> str:
         try:
