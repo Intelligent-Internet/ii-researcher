@@ -8,11 +8,13 @@ from ii_researcher.reasoning.tools.registry import (
 )
 from ii_researcher.reasoning.tools.web_scraper import WebScraperTool
 from ii_researcher.reasoning.tools.web_search import WebSearchTool
+from ii_researcher.reasoning.tools.python_executer import PythonExecutorTool
 
 __all__ = [
     "BaseTool",
     "WebSearchTool",
     "WebScraperTool",
+    "PythonExecutorTool",
     "register_tool",
     "get_tool",
     "list_tools",

@@ -34,6 +34,12 @@ class ConfigConstants:
     DUPLICATE_URL_TEMPLATE = ("I have already visited this url: {url}. Please don't visit it again.")
     SEARCH_SUFFIX = ("This results may not enough to provide useful information. "
                      "I must do more research or use page_visit tool to get detailed information. \n")
+    CODE_SUFFIX = ("I have just received the result of the code execution. "
+                   "I should note the interesting key result from the code execution or adjust my code "
+                   "to get the correct information.\n"
+                   "I can use it in the final answer.\n"
+                   "I can not provider the final answer when I don't have enough information or when "
+                   "I am not sure about the answer.\n")
     PAGE_VISIT_SUFFIX = ("I have just got some new information. Maybe it's helpful but let me see if it "
                          "contains something interesting.\n"
                          "I should note the interesting key ideas/ exact quote along with citations so that "
@@ -86,6 +92,10 @@ To help with your reasoning, you can call tools (Python functions) directly in y
 When you need more information, you can call a function like this:
 
 {ConfigConstants.TOOL_CALL_EXAMPLE}
+When you need to run python code, you can call a function like this:
+{ConfigConstants.CODE_BLOCK_START}
+execute_python(code="The python code to be run, print statement at the end")
+{ConfigConstants.CODE_BLOCK_END}{ConfigConstants.END_CODE}
 YOU MUST FOLLOW THE FUNCTION CALLING FORMAT STRICTLY and end the function call with {ConfigConstants.END_CODE}
 
 I will execute this code and provide you with the result in the format:
@@ -136,6 +146,10 @@ web_search(queries=["# the query to search", ...]) or page_visit(urls=["list of 
 {ConfigConstants.CODE_BLOCK_END}{ConfigConstants.END_CODE}
 {{available_tools}}
 {ConfigConstants.INSTRUCTIONS_CLOSE}
+*  When you need to run python code, you can call a function like this:
+{ConfigConstants.CODE_BLOCK_START}
+execute_python(code="The python code to be run. Print statement at the end")
+{ConfigConstants.CODE_BLOCK_END}{ConfigConstants.END_CODE}
 
 I just got some new information.
 """
