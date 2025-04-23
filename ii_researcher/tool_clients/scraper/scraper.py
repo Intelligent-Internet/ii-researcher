@@ -19,6 +19,7 @@ from .pymupdf.pymupdf import PyMuPDFScraper
 from .tavily_extract.tavily_extract import TavilyExtract
 from .utils import is_pdf_url
 from .youtube.youtube import YoutubeScraper
+from .jina.jina import JinaScraper
 
 
 def markdown_to_text(markdown_string):
@@ -163,6 +164,7 @@ class Scraper:
             "tavily_extract": TavilyExtract,
             "youtube": YoutubeScraper,
             "firecrawl": FirecrawlScraper,
+            "jina": JinaScraper,
         }
 
         scraper_key = None

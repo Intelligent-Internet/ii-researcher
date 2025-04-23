@@ -14,6 +14,7 @@ class TestSearchClient(TestCase):
         self.max_results = 3
         self.mock_tavily_key = "test-tavily-key"
         self.mock_serp_key = "test-serp-key"
+        self.mock_jina_key = "test-jina-key"
 
     def test_init_default_values(self):
         """Test initialization with default values"""
@@ -28,6 +29,50 @@ class TestSearchClient(TestCase):
         self.assertEqual(client.query, self.query)
         self.assertEqual(client.max_results, self.max_results)
         self.assertEqual(client.search_provider, "serpapi")
+
+    @patch('requests.get')
+    def test_jina_search(self, mock_get):
+        """Test Jina search functionality"""
+        # Mock response data
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "data": [
+                {
+                    "title": "Test1",
+                    "url": "http://test1.com",
+                    "description": "Content 1"
+                },
+                {
+                    "title": "Test2",
+                    "url": "http://test2.com",
+                    "description": "Content 2"
+                },
+            ]
+        }
+        mock_get.return_value = mock_response
+
+        with patch.dict(os.environ, {'JINA_API_KEY': self.mock_jina_key}):
+            client = SearchClient(search_provider="jina")
+            results = client.search(query=self.query, max_results=self.max_results)
+
+            # Verify the results
+            expected_results = [
+                {
+                    "title": "Test1",
+                    "url": "http://test1.com",
+                    "content": "Content 1"
+                },
+                {
+                    "title": "Test2",
+                    "url": "http://test2.com",
+                    "content": "Content 2"
+                },
+            ]
+            self.assertEqual(results, expected_results[:self.max_results])
+
+            # Verify the API key was used in the request
+            mock_get.assert_called_once()
 
     @patch('ii_researcher.tool_clients.search_client.TavilyClient')
     def test_tavily_search(self, mock_tavily):

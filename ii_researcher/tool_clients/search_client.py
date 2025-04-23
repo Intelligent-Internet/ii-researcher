@@ -41,6 +41,42 @@ class SearchClient:
             print(f"Unexpected error: {e}. Failed fetching sources from Tavily.")
             return []
 
+    def _search_query_by_jina(self, query, max_results=10):
+        """Searches the query using Jina AI search API."""
+        jina_api_key = os.environ.get("JINA_API_KEY")
+        if not jina_api_key:
+            print("Error: JINA_API_KEY environment variable not set")
+            return []
+
+        url = "https://s.jina.ai/"
+        params = {"q": query, "num": max_results}
+        encoded_url = url + "?" + urllib.parse.urlencode(params)
+
+        headers = {
+            "Authorization": f"Bearer {jina_api_key}",
+            "X-Respond-With": "no-content",
+            "Accept": "application/json"
+        }
+
+        search_response = []
+        try:
+            response = requests.get(encoded_url, headers=headers)
+            if response.status_code == 200:
+                search_results = response.json()['data']
+                if search_results:
+                    for result in search_results:
+                        search_response.append({
+                            "title": result.get("title", ""),
+                            "url": result.get("url", ""),
+                            "content": result.get("description", "")
+                        })
+                return search_response
+        except Exception as e:
+            print(f"Error: {e}. Failed fetching sources. Resulting in empty response.")
+            search_response = []
+
+        return search_response
+
     def _search_query_by_serp_api(self, query, max_results=10):
         """Searches the query using SerpAPI."""
 
@@ -88,8 +124,10 @@ class SearchClient:
 
         if self.search_provider == "tavily":
             return self._search_query_by_tavily(query, max_results)
-        if self.search_provider == "serpapi":
+        elif self.search_provider == "serpapi":
             return self._search_query_by_serp_api(query, max_results)
+        elif self.search_provider == "jina":
+            return self._search_query_by_jina(query, max_results)
         print(f"Error: Invalid search provider specified {self.search_provider}")
         return {}
 
