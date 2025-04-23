@@ -10,7 +10,7 @@ from ii_researcher.tool_clients.scraper.youtube.youtube import YoutubeScraper
 from ii_researcher.tool_clients.scraper.tavily_extract.tavily_extract import TavilyExtract
 from ii_researcher.tool_clients.scraper.firecrawl.firecrawl import FirecrawlScraper
 from ii_researcher.tool_clients.scraper.browser.browser import BrowserScraper
-
+from ii_researcher.tool_clients.scraper.jina.jina import JinaScraper
 
 class TestMarkdownToText:
 
@@ -256,6 +256,11 @@ class TestScraper:
         scraper = Scraper(["https://example.com"], "Mozilla/5.0", "firecrawl")
         scraper_class = scraper.get_scraper("https://example.com/page")
         assert scraper_class == FirecrawlScraper
+
+        # Test with Jina
+        scraper = Scraper(["https://example.com"], "Mozilla/5.0", "jina")
+        scraper_class = scraper.get_scraper("https://example.com/page")
+        assert scraper_class == JinaScraper
 
     def test_get_scraper_invalid(self):
         scraper = Scraper(["https://example.com"], "Mozilla/5.0", "invalid_scraper")
