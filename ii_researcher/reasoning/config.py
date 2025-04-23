@@ -172,7 +172,7 @@ Using the above latest information, Prepare a detailed report introduction on th
 - The introduction should be preceded by an H1 heading with a suitable topic for the entire report.
 - You must use in-text citation references in apa format and make it with markdown hyperlink placed at the end of the sentence or paragraph that references them like this: ([in-text citation](url)).
 Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y')} if required.
-- The output must be in english language.
+- The output must be written in the same language as the main topic.
 """
         return [
             {
@@ -199,6 +199,7 @@ Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y'
             - There should NOT be any duplicate subtopics.
             - Limit the number of subtopics from 2 to 7
             - Finally order the subtopics by their tasks, in a relevant and meaningful order which is presentable in a detailed report
+            - The subtopics must be written in the same language as the main topic.
 
             "IMPORTANT!":
             - Every subtopic MUST be relevant to the main topic and provided research data ONLY!
@@ -242,6 +243,7 @@ IMPORTANT:Content and Sections Uniqueness:
 - Do not repeat any information already covered in the existing written contents or closely related variations to avoid duplicates.
 - If you have nested subsections, ensure they are unique and not covered in the existing written contents.
 - Ensure that your content is entirely new and does not overlap with any information already covered in the previous subtopic reports.
+- Your report must be written in the same language as the main topic and subtopic
 
 - All the available topics are:
 
@@ -302,6 +304,7 @@ Please follow all of the following guidelines in your report:
 - You must also prioritize new articles over older articles if the source can be trusted.
 - Use in-text citation references in apa format and make it with markdown hyperlink placed at the end of the sentence or paragraph that references them like this: ([in-text citation](url)).
 - For all references, use the exact url as provided in the visited URLs sections.
+- The report language must be written in the same language as the main topic
 
 You MUST write all used source urls at the end of the report as references, and make sure to not add duplicated sources, but only one reference for each.
 Additionally, you MUST include hyperlinks to the relevant URLs wherever they are referenced in the report: 
