@@ -15,6 +15,7 @@ from ii_researcher.reasoning.tools.registry import (
     get_all_tools,
     get_tool,
 )
+from ii_researcher.reasoning.builders.report import ReportType
 
 
 class ReasoningAgent:
@@ -23,6 +24,7 @@ class ReasoningAgent:
     def __init__(
         self,
         question: str,
+        report_type: ReportType = ReportType.ADVANCED,
         stream_event: Optional[Callable[[str, Dict[str, Any]], None]] = None,
         override_config: Optional[Dict[str, Any]] = None,
     ):
@@ -40,6 +42,7 @@ class ReasoningAgent:
         if override_config:
             update_config(override_config)
         self.stream_event = stream_event
+        self.report_type = report_type
 
         # Update system prompt with available tools and current date
         available_tools = format_tool_descriptions()
@@ -143,10 +146,10 @@ class ReasoningAgent:
                     report_builder = ReportBuilder(self.stream_event)
                     if is_stream:
                         # Stream the report
-                        final_report = await report_builder.generate_advance_report_stream(
-                            self.tool_history, self.trace, on_token)
+                        final_report = await report_builder.generate_stream(self.tool_history, self.trace,
+                                                                            self.report_type, on_token)
                     else:
-                        final_report = report_builder.generate_advance_report(self.tool_history, self.trace)
+                        final_report = report_builder.generate(self.tool_history, self.trace, self.report_type)
 
                     # Create a final turn with the report
                     report_output = ModelOutput(raw=final_report, is_last=True)
