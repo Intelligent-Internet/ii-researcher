@@ -124,6 +124,7 @@ class ReasoningAgent:
                 model_output = ModelOutput.from_string(content, tool_names=get_all_tools().keys())
             except (ValueError, KeyError) as e:
                 logging.error("Error parsing model output: %s", str(e))
+                print(e)
                 model_output = ModelOutput(raw=content)
 
             # Handle normal action/response case
@@ -137,6 +138,8 @@ class ReasoningAgent:
                 self.trace.turns.append(Turn(output=model_output, action_result=action_result, suffix=suffix))
 
             else:
+                print("END ACTION")
+                print(model_output.to_string())
                 # Mark this as the last output
                 model_output.is_last = True
                 self.trace.turns.append(Turn(output=model_output, action_result="", suffix=None))
