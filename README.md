@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/intelligent-internet-ii-researcher-badge.png)](https://mseep.ai/app/intelligent-internet-ii-researcher)
+
 # II-Researcher
 
 ![ii_researcher](https://github.com/user-attachments/assets/966dd403-fd73-4829-9d87-3878ecf025b1)
