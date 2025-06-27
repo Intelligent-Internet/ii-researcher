@@ -2,9 +2,14 @@
 
 ![ii_researcher](https://github.com/user-attachments/assets/966dd403-fd73-4829-9d87-3878ecf025b1)
 
+
 A powerful deep search agent that uses BAML functions to perform intelligent web searches and generate comprehensive answers to questions.
 
 For more details about our project, please visit our [blog post](https://www.ii.inc/web/blog/post/ii-researcher).
+
+## Updates:
+We benchmarked on the [Frames dataset](https://huggingface.co/datasets/google/frames-benchmark/viewer/default/test) by Google using the DeepSeek-R1-0528 model, and II-Researcher achieved an accuracy of 84.12%.
+![image](https://github.com/user-attachments/assets/aac55e2a-193b-4f67-858f-d3ad133a59e2)
 
 ## Features
 
@@ -166,7 +171,7 @@ model_list:
 
   - model_name: "gemini-lite"
     litellm_params:
-      model: "google/gemini-2.0-flash-lite-001"
+      model: "gemini/gemini-2.5-pro-preview-03-25"
       api_base: "https://openrouter.ai/api/v1"
       api_key: "your_openrouter_api_key_here"
 
