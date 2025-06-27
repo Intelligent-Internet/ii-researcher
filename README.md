@@ -8,8 +8,10 @@ A powerful deep search agent that uses BAML functions to perform intelligent web
 For more details about our project, please visit our [blog post](https://www.ii.inc/web/blog/post/ii-researcher).
 
 ## Updates:
+
 We benchmarked on the [Frames dataset](https://huggingface.co/datasets/google/frames-benchmark/viewer/default/test) by Google using the DeepSeek-R1-0528 model, and II-Researcher achieved an accuracy of 84.12%.
-![image](https://github.com/user-attachments/assets/aac55e2a-193b-4f67-858f-d3ad133a59e2)
+![image](https://github.com/user-attachments/assets/ac0efa3a-bc94-4370-bb11-e883b7a93e0c)
+
 
 ## Features
 
