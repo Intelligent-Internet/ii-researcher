@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY pyproject.toml .
 COPY ii_researcher/ ./ii_researcher/
-COPY baml_client/ ./baml_client/
 RUN pip install --no-cache-dir .
 
 COPY . .
