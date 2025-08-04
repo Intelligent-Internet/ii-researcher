@@ -44,7 +44,9 @@ def normalize_url(url_string: str, debug: bool = False) -> str:
 
         # Handle port
         if port is not None:
-            if (parsed.scheme == "http" and port == "80") or (parsed.scheme == "https" and port == "443"):
+            if (parsed.scheme == "http" and port == "80") or (
+                parsed.scheme == "https" and port == "443"
+            ):
                 netloc = hostname
             else:
                 netloc = f"{hostname}:{port}"
@@ -107,7 +109,9 @@ def normalize_url(url_string: str, debug: bool = False) -> str:
                     print(f"Failed to decode fragment: {fragment}", e)
 
         # Reconstruct the URL
-        normalized_url = urlunparse((parsed.scheme, netloc, normalized_path, parsed.params, query, fragment))
+        normalized_url = urlunparse(
+            (parsed.scheme, netloc, normalized_path, parsed.params, query, fragment)
+        )
 
         # Final URL validation
         try:

@@ -12,7 +12,8 @@ def extract_title(soup: BeautifulSoup) -> str:
 
 def clean_soup(soup: BeautifulSoup) -> BeautifulSoup:
     """Clean the soup by removing unwanted tags"""
-    for tag in soup.find_all([
+    for tag in soup.find_all(
+        [
             "script",
             "style",
             "footer",
@@ -21,7 +22,8 @@ def clean_soup(soup: BeautifulSoup) -> BeautifulSoup:
             "menu",
             "sidebar",
             "svg",
-    ]):
+        ]
+    ):
         tag.decompose()
 
     disallowed_class_set = {"nav", "menu", "sidebar", "footer"}
@@ -31,7 +33,9 @@ def clean_soup(soup: BeautifulSoup) -> BeautifulSoup:
         if not isinstance(elem, bs4.Tag):
             return False
 
-        return any(cls_name in disallowed_class_set for cls_name in elem.get("class", []))
+        return any(
+            cls_name in disallowed_class_set for cls_name in elem.get("class", [])
+        )
 
     for tag in soup.find_all(does_tag_have_disallowed_class):
         tag.decompose()

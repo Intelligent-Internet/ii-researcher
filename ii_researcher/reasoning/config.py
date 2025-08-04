@@ -21,25 +21,33 @@ class ConfigConstants:
     INSTRUCTIONS_OPEN = "<instructions>"
     INSTRUCTIONS_CLOSE = "</instructions>"
 
-    TOOL_CALL_EXAMPLE = (f"{CODE_BLOCK_START}\n"
-                         'web_search(queries=["# the query to search", ...]) or '
-                         'page_visit(urls=["list of urls to visit", ...])\n'
-                         f"{CODE_BLOCK_END}{END_CODE}")
+    TOOL_CALL_EXAMPLE = (
+        f"{CODE_BLOCK_START}\n"
+        'web_search(queries=["# the query to search", ...]) or '
+        'page_visit(urls=["list of urls to visit", ...])\n'
+        f"{CODE_BLOCK_END}{END_CODE}"
+    )
 
     # Stop sequences
     DEFAULT_STOP_SEQUENCE = [END_CODE]
 
     # Templates
     DUPLICATE_QUERY_TEMPLATE = "I have already searched for this query: {query}. Please don't search for it again."
-    DUPLICATE_URL_TEMPLATE = ("I have already visited this url: {url}. Please don't visit it again.")
-    SEARCH_SUFFIX = ("This results may not enough to provide useful information. "
-                     "I must do more research or use page_visit tool to get detailed information. \n")
-    PAGE_VISIT_SUFFIX = ("I have just got some new information. Maybe it's helpful but let me see if it "
-                         "contains something interesting.\n"
-                         "I should note the interesting key ideas/ exact quote along with citations so that "
-                         "I can use it in the final answer.\n"
-                         "I can not provider the final answer when I don't have enough information or when "
-                         "I am not sure about the answer.\n")
+    DUPLICATE_URL_TEMPLATE = (
+        "I have already visited this url: {url}. Please don't visit it again."
+    )
+    SEARCH_SUFFIX = (
+        "This results may not enough to provide useful information. "
+        "I must do more research or use page_visit tool to get detailed information. \n"
+    )
+    PAGE_VISIT_SUFFIX = (
+        "I have just got some new information. Maybe it's helpful but let me see if it "
+        "contains something interesting.\n"
+        "I should note the interesting key ideas/ exact quote along with citations so that "
+        "I can use it in the final answer.\n"
+        "I can not provider the final answer when I don't have enough information or when "
+        "I am not sure about the answer.\n"
+    )
 
 
 class ToolConfig(BaseModel):
@@ -55,19 +63,31 @@ class LLMConfig(BaseModel):
     """Configuration for LLM clients."""
 
     model: str = Field(default_factory=lambda: os.getenv("R_MODEL", "r1"))
-    temperature: float = Field(default_factory=lambda: float(os.getenv("R_TEMPERATURE", "0.2")))
+    temperature: float = Field(
+        default_factory=lambda: float(os.getenv("R_TEMPERATURE", "0.2"))
+    )
     top_p: float = 0.95
-    presence_penalty: float = Field(default_factory=lambda: float(os.getenv("R_PRESENCE_PENALTY", "0")))
-    stop_sequence: List[str] = Field(default_factory=lambda: ConfigConstants.DEFAULT_STOP_SEQUENCE)
+    presence_penalty: float = Field(
+        default_factory=lambda: float(os.getenv("R_PRESENCE_PENALTY", "0"))
+    )
+    stop_sequence: List[str] = Field(
+        default_factory=lambda: ConfigConstants.DEFAULT_STOP_SEQUENCE
+    )
     api_key: str = Field(default_factory=lambda: os.getenv("OPENAI_API_KEY", "empty"))
-    base_url: str = Field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", "http://localhost:4000"))
-    report_model: str = Field(default_factory=lambda: os.getenv("R_REPORT_MODEL", "gpt-4o"))
+    base_url: str = Field(
+        default_factory=lambda: os.getenv("OPENAI_BASE_URL", "http://localhost:4000")
+    )
+    report_model: str = Field(
+        default_factory=lambda: os.getenv("R_REPORT_MODEL", "gpt-4o")
+    )
 
     def get_effective_stop_sequence(self, trace_has_turns: bool = False) -> List[str]:
         """Get effective stop sequence based on state."""
         if trace_has_turns:
             # Include </think> tag as a stop token when we have turns
-            return list(set(self.stop_sequence).union([ConfigConstants.THINK_TAG_CLOSE]))
+            return list(
+                set(self.stop_sequence).union([ConfigConstants.THINK_TAG_CLOSE])
+            )
         return self.stop_sequence
 
 
@@ -150,7 +170,9 @@ class ReportConfig(BaseModel):
 
     # Report system prompt (separate to avoid mixing with main prompt)
 
-    def generate_introduction_messages(self, trace: str, query: str) -> List[Dict[str, Any]]:
+    def generate_introduction_messages(
+        self, trace: str, query: str
+    ) -> List[Dict[str, Any]]:
         introduction_prompt = f"""{trace}\n 
 Using the above latest information, Prepare a detailed report introduction on the topic -- {query}.
 - The introduction should be succinct, well-structured, informative with markdown syntax.
@@ -163,7 +185,7 @@ Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y'
         return [
             {
                 "role": "system",
-                "content": "You are a professional writer. Please write a detailed report introduction on the topic."
+                "content": "You are a professional writer. Please write a detailed report introduction on the topic.",
             },
             {
                 "role": "user",
@@ -171,7 +193,9 @@ Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y'
             },
         ]
 
-    def generate_subtopics_messages(self, trace: str, query: str) -> List[Dict[str, Any]]:
+    def generate_subtopics_messages(
+        self, trace: str, query: str
+    ) -> List[Dict[str, Any]]:
         subtopics_prompt = f"""
             Provided the main topic:
 
@@ -192,10 +216,8 @@ Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y'
             """
         return [
             {
-                "role":
-                    "system",
-                "content":
-                    "You are a professional writer. Please generate a list of subtopics that can answer the main topic and relevant to the provided research data."
+                "role": "system",
+                "content": "You are a professional writer. Please generate a list of subtopics that can answer the main topic and relevant to the provided research data.",
             },
             {
                 "role": "user",
@@ -203,8 +225,14 @@ Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y'
             },
         ]
 
-    def generate_subtopic_report_messages(self, trace: str, content_from_previous_subtopics: str, subtopics: List[str],
-                                          current_subtopic: str, query: str) -> List[Dict[str, Any]]:
+    def generate_subtopic_report_messages(
+        self,
+        trace: str,
+        content_from_previous_subtopics: str,
+        subtopics: List[str],
+        current_subtopic: str,
+        query: str,
+    ) -> List[Dict[str, Any]]:
         subtopic_report_prompt = f"""
 Context:
 "{trace}"
@@ -268,7 +296,7 @@ Do NOT add a conclusion section.
         return [
             {
                 "role": "system",
-                "content": "You are a professional writer. Please write a detailed report on the subtopic."
+                "content": "You are a professional writer. Please write a detailed report on the subtopic.",
             },
             {
                 "role": "user",
@@ -329,10 +357,8 @@ The response format is in well markdown.
                 "content": report_system_prompt,
             },
             {
-                "role":
-                    "user",
-                "content":
-                    f"""Here is the research process and findings:
+                "role": "user",
+                "content": f"""Here is the research process and findings:
 
                 ### Research Process
                 {trace}

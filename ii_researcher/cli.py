@@ -39,7 +39,9 @@ async def main(
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="AI Research Agent")
-    parser.add_argument("--question", type=str, required=True, help="The question to research")
+    parser.add_argument(
+        "--question", type=str, required=True, help="The question to research"
+    )
     parser.add_argument(
         "--save-report",
         action="store_true",
@@ -63,4 +65,5 @@ if __name__ == "__main__":
             save_report=args.save_report,
             is_stream=args.stream,
             report_type=ReportType(args.report_type),
-        ))
+        )
+    )

@@ -89,4 +89,6 @@ def evaluate_ast_node(node: ast.AST) -> Any:
         return ast.literal_eval(code)
     except (AttributeError, ValueError) as exc:
         # For Python versions without ast.unparse or other issues
-        raise ValueError(f"Cannot evaluate complex expression: {ast.dump(node)}") from exc
+        raise ValueError(
+            f"Cannot evaluate complex expression: {ast.dump(node)}"
+        ) from exc

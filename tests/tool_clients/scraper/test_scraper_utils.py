@@ -1,13 +1,16 @@
-import pytest
 import requests
 from unittest.mock import Mock, patch
 from bs4 import BeautifulSoup
 
-from ii_researcher.tool_clients.scraper.utils import (extract_title, clean_soup, get_text_from_soup, is_pdf_url)
+from ii_researcher.tool_clients.scraper.utils import (
+    extract_title,
+    clean_soup,
+    get_text_from_soup,
+    is_pdf_url,
+)
 
 
 class TestExtractTitle:
-
     def test_extract_title_with_title(self):
         html = "<html><head><title>Test Title</title></head><body></body></html>"
         soup = BeautifulSoup(html, "html.parser")
@@ -20,7 +23,6 @@ class TestExtractTitle:
 
 
 class TestCleanSoup:
-
     def test_remove_unwanted_tags(self):
         html = """
         <html>
@@ -80,7 +82,6 @@ class TestCleanSoup:
 
 
 class TestGetTextFromSoup:
-
     def test_get_text_formatting(self):
         html = """
         <html>
@@ -107,7 +108,6 @@ class TestGetTextFromSoup:
 
 
 class TestIsPdfUrl:
-
     @patch("requests.head")
     def test_pdf_url_true(self, mock_head):
         mock_response = Mock()
@@ -115,7 +115,9 @@ class TestIsPdfUrl:
         mock_head.return_value = mock_response
 
         assert is_pdf_url("http://example.com/document.pdf") is True
-        mock_head.assert_called_once_with("http://example.com/document.pdf", allow_redirects=True, timeout=5)
+        mock_head.assert_called_once_with(
+            "http://example.com/document.pdf", allow_redirects=True, timeout=5
+        )
 
     @patch("requests.head")
     def test_pdf_url_false(self, mock_head):

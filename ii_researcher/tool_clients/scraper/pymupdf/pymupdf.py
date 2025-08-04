@@ -7,7 +7,6 @@ from langchain_community.document_loaders import PyMuPDFLoader
 
 
 class PyMuPDFScraper:
-
     def __init__(self, link, session=None):
         """
         Initialize the scraper with a link and an optional session.
@@ -28,7 +27,9 @@ class PyMuPDFScraper:
         """
         try:
             result = urlparse(self.link)
-            return all([result.scheme, result.netloc])  # Check for valid scheme and network location
+            return all(
+                [result.scheme, result.netloc]
+            )  # Check for valid scheme and network location
         except Exception:
             return False
 
@@ -45,16 +46,26 @@ class PyMuPDFScraper:
                 pdf_url = self.link
 
                 # handle github pdf links
-                if ("github.com" in self.link and "/blob/" in self.link and self.link.endswith(".pdf")):
-                    pdf_url = self.link.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
+                if (
+                    "github.com" in self.link
+                    and "/blob/" in self.link
+                    and self.link.endswith(".pdf")
+                ):
+                    pdf_url = self.link.replace(
+                        "github.com", "raw.githubusercontent.com"
+                    ).replace("/blob/", "/")
 
                 response = requests.get(pdf_url, timeout=5, stream=True)
                 response.raise_for_status()
 
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+                with tempfile.NamedTemporaryFile(
+                    delete=False, suffix=".pdf"
+                ) as temp_file:
                     temp_filename = temp_file.name  # Get the temporary file name
                     for chunk in response.iter_content(chunk_size=8192):
-                        temp_file.write(chunk)  # Write the downloaded content to the temporary file
+                        temp_file.write(
+                            chunk
+                        )  # Write the downloaded content to the temporary file
 
                 loader = PyMuPDFLoader(temp_filename)
                 doc = loader.load()

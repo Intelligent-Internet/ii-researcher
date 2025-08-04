@@ -1,21 +1,25 @@
 from typing import List
 
-from ii_researcher.tool_clients.compressor.compressor_client import extract_relevant_segments, Passage
+from ii_researcher.tool_clients.compressor.compressor_client import (
+    extract_relevant_segments,
+    Passage,
+)
 
 from .base import Compressor
 
 
 class LLMCompressor(Compressor):
-
     async def acompress(self, chunks: List[str], title: str, query: str) -> List[int]:
-        numbered_chunks = " ".join([f"<#{i+1}#> {chunk}" for i, chunk in enumerate(chunks)
-                                   ])  # +1 because numbered_chunks is 1-indexed
-        related = (await extract_relevant_segments(
+        numbered_chunks = " ".join(
+            [f"<#{i+1}#> {chunk}" for i, chunk in enumerate(chunks)]
+        )  # +1 because numbered_chunks is 1-indexed
+        related = await extract_relevant_segments(
             passage=Passage(text=numbered_chunks, query=query),
-        ))
+        )
 
-        return [num - 1 for num in parse_segment_numbers(related) if num >= 1
-               ]  # -1 because numbered_chunks is 1-indexed
+        return [
+            num - 1 for num in parse_segment_numbers(related) if num >= 1
+        ]  # -1 because numbered_chunks is 1-indexed
 
 
 def parse_segment_numbers(segment_list: str) -> List[int]:

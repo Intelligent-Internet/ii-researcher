@@ -32,7 +32,9 @@ class Action(BaseModel):
 
             # Check if string contains function call pattern
             if not (string.endswith(")") and "(" in string):
-                raise ValueError(f"String must be in format 'name(arg1=value1, arg2=...)' but got {string}")
+                raise ValueError(
+                    f"String must be in format 'name(arg1=value1, arg2=...)' but got {string}"
+                )
 
             # Parse the AST
             tree = ast.parse(string)

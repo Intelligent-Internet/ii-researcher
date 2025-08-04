@@ -1,5 +1,4 @@
 # tests/reasoning/test_agent.py
-import asyncio
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -34,9 +33,8 @@ class MockOpenAIClient:
 ```py
 web_search(queries=["example query"])
 ```<end_code>""",
-
             # Second turn: Provide answer
-            "Based on my research, here's the answer to your question."
+            "Based on my research, here's the answer to your question.",
         ]
         self.response_index = 0
 
@@ -52,7 +50,7 @@ web_search(queries=["example query"])
         self.response_index = (self.response_index + 1) % len(self.responses)
 
         # Split response into tokens
-        tokens = [response[i:i + 5] for i in range(0, len(response), 5)]
+        tokens = [response[i : i + 5] for i in range(0, len(response), 5)]
         return MockAsyncGenerator(tokens)
 
 
@@ -72,18 +70,25 @@ async def test_agent_with_streaming():
     mock_tool_class.return_value = mock_tool_instance
 
     # Setup patching
-    with patch('ii_researcher.reasoning.agent.OpenAIClient', mock_openai), \
-         patch('ii_researcher.reasoning.agent.get_config') as mock_get_config, \
-         patch('ii_researcher.reasoning.agent.format_tool_descriptions'), \
-         patch('ii_researcher.reasoning.agent.get_all_tools') as mock_get_all_tools, \
-         patch('ii_researcher.reasoning.agent.get_tool', return_value=mock_tool_class):
-
+    with patch("ii_researcher.reasoning.agent.OpenAIClient", mock_openai), patch(
+        "ii_researcher.reasoning.agent.get_config"
+    ) as mock_get_config, patch(
+        "ii_researcher.reasoning.agent.format_tool_descriptions"
+    ), patch(
+        "ii_researcher.reasoning.agent.get_all_tools"
+    ) as mock_get_all_tools, patch(
+        "ii_researcher.reasoning.agent.get_tool", return_value=mock_tool_class
+    ):
         # Setup mock config
         mock_config = MagicMock()
-        mock_config.instructions = "Test instructions with {available_tools} and {current_date}"
+        mock_config.instructions = (
+            "Test instructions with {available_tools} and {current_date}"
+        )
         mock_config.llm = MagicMock()
         mock_config.llm.stop_sequence = ["<end_code>"]
-        mock_config.llm.get_effective_stop_sequence = MagicMock(return_value=["<end_code>"])
+        mock_config.llm.get_effective_stop_sequence = MagicMock(
+            return_value=["<end_code>"]
+        )
         mock_get_config.return_value = mock_config
 
         # Setup mock tools
@@ -110,8 +115,9 @@ async def test_agent_with_streaming():
         mock_report_builder.return_value = mock_report_instance
 
         # Run the agent
-        with patch('ii_researcher.reasoning.agent.ReportBuilder', mock_report_builder), \
-             patch('ii_researcher.reasoning.agent.asyncio.sleep', return_value=None):
+        with patch(
+            "ii_researcher.reasoning.agent.ReportBuilder", mock_report_builder
+        ), patch("ii_researcher.reasoning.agent.asyncio.sleep", return_value=None):
             result = await agent.run(on_token=on_token_mock, is_stream=True)
 
         # Verify the result

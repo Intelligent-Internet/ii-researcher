@@ -1,11 +1,9 @@
-import json
 import os
 
 import requests
 
 
 class JinaScraper:
-
     def __init__(self, link, session=None):
         """
         Initialize the scraper with a link and an optional session.
@@ -29,7 +27,7 @@ class JinaScraper:
             "Accept": "application/json",
             "Authorization": f"Bearer {jina_api_key}",
             "X-Engine": "browser",
-            "X-Return-Format": "markdown"
+            "X-Return-Format": "markdown",
         }
 
         try:

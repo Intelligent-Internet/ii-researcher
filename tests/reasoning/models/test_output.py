@@ -1,12 +1,10 @@
 # tests/reasoning/models/test_output.py
-import pytest
 from ii_researcher.reasoning.models.output import ModelOutput, clean_streamed_output
 from ii_researcher.reasoning.models.action import Action
 from ii_researcher.reasoning.config import ConfigConstants
 
 
 class TestModelOutput:
-
     def test_from_string_no_action(self):
         """Test parsing string with no action."""
         output_string = "This is a regular output with no action."
@@ -55,11 +53,18 @@ class TestModelOutput:
     def test_full_format(self):
         """Test full format representation."""
         output = ModelOutput(action=None, raw="  Raw content with spaces  ")
-        assert output.full_format() == "Raw content with spaces" + ConfigConstants.END_CODE
+        assert (
+            output.full_format() == "Raw content with spaces" + ConfigConstants.END_CODE
+        )
 
         # Test with END_CODE already in the content
-        output = ModelOutput(action=None, raw=f"Raw content with END_CODE{ConfigConstants.END_CODE}")
-        assert output.full_format() == "Raw content with END_CODE" + ConfigConstants.END_CODE
+        output = ModelOutput(
+            action=None, raw=f"Raw content with END_CODE{ConfigConstants.END_CODE}"
+        )
+        assert (
+            output.full_format()
+            == "Raw content with END_CODE" + ConfigConstants.END_CODE
+        )
 
     def test_to_string(self):
         """Test to_string method."""
@@ -68,8 +73,13 @@ class TestModelOutput:
         assert output.to_string() == "Regular output" + ConfigConstants.END_CODE
 
         # With THINK_TAG_CLOSE in the raw content
-        output = ModelOutput(action=None, raw=f"Some thinking{ConfigConstants.THINK_TAG_CLOSE}Final answer")
-        assert output.to_string() == "Some thinkingFinal answer" + ConfigConstants.END_CODE
+        output = ModelOutput(
+            action=None,
+            raw=f"Some thinking{ConfigConstants.THINK_TAG_CLOSE}Final answer",
+        )
+        assert (
+            output.to_string() == "Some thinkingFinal answer" + ConfigConstants.END_CODE
+        )
 
     def test_is_last_flag(self):
         """Test is_last flag behavior."""
@@ -81,7 +91,6 @@ class TestModelOutput:
 
 
 class TestCleanStreamedOutput:
-
     def test_clean_normal_text(self):
         """Test cleaning normal text without END_CODE."""
         text = "This is normal text"

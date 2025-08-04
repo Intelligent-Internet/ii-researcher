@@ -40,13 +40,20 @@ class Trace(BaseModel):
         if len(self.turns) == 0:
             return_string = (
                 f"{ConfigConstants.THINK_TAG_OPEN} {instructions if instructions else ''} \nSo, the user's question is: '{self.query}' \n"
-                + "\n".join(turn_messages))
+                + "\n".join(turn_messages)
+            )
         else:
-            return_string = (f"{ConfigConstants.THINK_TAG_OPEN} So, the user's question is: '{self.query}' " +
-                             "\n".join(turn_messages) + f"\n{instructions if instructions else ''}")
+            return_string = (
+                f"{ConfigConstants.THINK_TAG_OPEN} So, the user's question is: '{self.query}' "
+                + "\n".join(turn_messages)
+                + f"\n{instructions if instructions else ''}"
+            )
 
-        if (len(self.turns) > 0 and self.turns[-1].output.is_last and
-            (not return_string.strip().endswith(ConfigConstants.THINK_TAG_CLOSE))):
+        if (
+            len(self.turns) > 0
+            and self.turns[-1].output.is_last
+            and (not return_string.strip().endswith(ConfigConstants.THINK_TAG_CLOSE))
+        ):
             return_string += ConfigConstants.THINK_TAG_CLOSE
 
         return return_string

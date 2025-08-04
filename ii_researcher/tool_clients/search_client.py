@@ -55,21 +55,23 @@ class SearchClient:
         headers = {
             "Authorization": f"Bearer {jina_api_key}",
             "X-Respond-With": "no-content",
-            "Accept": "application/json"
+            "Accept": "application/json",
         }
 
         search_response = []
         try:
             response = requests.get(encoded_url, headers=headers)
             if response.status_code == 200:
-                search_results = response.json()['data']
+                search_results = response.json()["data"]
                 if search_results:
                     for result in search_results:
-                        search_response.append({
-                            "title": result.get("title", ""),
-                            "url": result.get("url", ""),
-                            "content": result.get("description", "")
-                        })
+                        search_response.append(
+                            {
+                                "title": result.get("title", ""),
+                                "url": result.get("url", ""),
+                                "content": result.get("description", ""),
+                            }
+                        )
                 return search_response
         except Exception as e:
             print(f"Error: {e}. Failed fetching sources. Resulting in empty response.")
@@ -96,11 +98,13 @@ class SearchClient:
                     for result in results:
                         if results_processed >= max_results:
                             break
-                        search_response.append({
-                            "title": result["title"],
-                            "url": result["link"],
-                            "content": result["snippet"],
-                        })
+                        search_response.append(
+                            {
+                                "title": result["title"],
+                                "url": result["link"],
+                                "content": result["snippet"],
+                            }
+                        )
                         results_processed += 1
         except Exception as e:
             print(f"Error: {e}. Failed fetching sources. Resulting in empty response.")

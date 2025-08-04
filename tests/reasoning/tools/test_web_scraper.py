@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
+from unittest.mock import patch, AsyncMock
 
 from ii_researcher.reasoning.tools.web_scraper import WebScraperTool
 from ii_researcher.reasoning.tools.tool_history import ToolHistory
@@ -7,7 +7,6 @@ from ii_researcher.reasoning.config import ConfigConstants, get_config
 
 
 class TestWebScraperTool:
-
     def setup_method(self):
         """Set up for each test."""
         # Reset the class variable before each test to ensure test isolation
@@ -22,7 +21,7 @@ class TestWebScraperTool:
             "title": "Example Domain",
             "url": "https://example.com",
             "content": "This domain is for use in illustrative examples.",
-            "raw_content": "<html><body>This domain is for use in illustrative examples.</body></html>"
+            "raw_content": "<html><body>This domain is for use in illustrative examples.</body></html>",
         }
 
     def teardown_method(self):
@@ -30,7 +29,7 @@ class TestWebScraperTool:
         WebScraperTool.reset()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_no_urls(self, mock_scrape_client):
         """Test execute with no URLs."""
         result = await self.web_scraper_tool.execute(urls=[])
@@ -38,7 +37,7 @@ class TestWebScraperTool:
         mock_scrape_client.assert_not_called()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_single_url(self, mock_scrape_client):
         """Test execute with a single URL."""
         # Set up mock
@@ -50,7 +49,7 @@ class TestWebScraperTool:
         result = await self.web_scraper_tool.execute(urls=[self.test_url])
 
         # Assertions
-        assert f"Title: Example Domain" in result
+        assert "Title: Example Domain" in result
         assert f"URL: {self.test_url}" in result
         assert "This domain is for use in illustrative examples." in result
 
@@ -62,7 +61,7 @@ class TestWebScraperTool:
         assert self.test_url in WebScraperTool._visited_urls
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_with_question(self, mock_scrape_client):
         """Test execute with a question parameter."""
         # Set up mock
@@ -72,14 +71,16 @@ class TestWebScraperTool:
 
         # Execute with question parameter
         question = "What is an example domain?"
-        result = await self.web_scraper_tool.execute(urls=[self.test_url], question=question)
+        result = await self.web_scraper_tool.execute(
+            urls=[self.test_url], question=question
+        )
 
         # Verify ScrapeClient was initialized with the question
         mock_scrape_client.assert_called_once_with(query=question)
         mock_instance.scrape.assert_called_once_with(self.test_url)
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_multiple_urls(self, mock_scrape_client):
         """Test execute with multiple URLs."""
         # Set up mock
@@ -98,7 +99,7 @@ class TestWebScraperTool:
             assert url in WebScraperTool._visited_urls
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_max_urls_limit(self, mock_scrape_client):
         """Test execute respects the max_urls_to_visit limit."""
         # Set up mock
@@ -112,7 +113,9 @@ class TestWebScraperTool:
         excess_urls = [f"https://example{i}.com" for i in range(5)]
 
         # Execute
-        with patch('ii_researcher.reasoning.tools.web_scraper.get_config', return_value=config):
+        with patch(
+            "ii_researcher.reasoning.tools.web_scraper.get_config", return_value=config
+        ):
             result = await self.web_scraper_tool.execute(urls=excess_urls)
 
         # Check that only max_urls_to_visit were processed
@@ -127,7 +130,7 @@ class TestWebScraperTool:
             assert excess_urls[i] not in WebScraperTool._visited_urls
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_duplicate_url(self, mock_scrape_client):
         """Test execute with a duplicate URL."""
         # Set up mock
@@ -149,7 +152,7 @@ class TestWebScraperTool:
         mock_instance.scrape.assert_not_called()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_with_tool_history(self, mock_scrape_client):
         """Test execute with tool_history parameter."""
         # Set up mock
@@ -158,13 +161,15 @@ class TestWebScraperTool:
         mock_scrape_client.return_value = mock_instance
 
         # Execute with tool_history
-        await self.web_scraper_tool.execute(tool_history=self.tool_history, urls=[self.test_url])
+        await self.web_scraper_tool.execute(
+            tool_history=self.tool_history, urls=[self.test_url]
+        )
 
         # Verify URL was added to tool_history
         assert self.test_url in self.tool_history.get_visited_urls()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_scraper.ScrapeClient')
+    @patch("ii_researcher.reasoning.tools.web_scraper.ScrapeClient")
     async def test_execute_scrape_error(self, mock_scrape_client):
         """Test execute handles scraping errors."""
         # Set up mock to raise an exception
@@ -176,7 +181,10 @@ class TestWebScraperTool:
         result = await self.web_scraper_tool.execute(urls=[self.test_url])
 
         # Verify error message is in the result
-        assert f"Unexpected error while scraping URL '{self.test_url}': Scraping error" in result
+        assert (
+            f"Unexpected error while scraping URL '{self.test_url}': Scraping error"
+            in result
+        )
 
         # Verify URL was still added to visited URLs despite the error
         assert self.test_url in WebScraperTool._visited_urls

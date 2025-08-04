@@ -1,4 +1,4 @@
-# II-Search-CIR 4B Demo: Code Integrated Reasoning for Medical Research
+# II-Search-CIR 4B Demo: Code Integrated Reasoning for Research
 
 This repository demonstrates the **II-Search-CIR 4B** model, showcasing Code-Integrated Reasoning (CIR) - a powerful method for tool interaction with reasoning processes. This demo application focuses on medical literature research using PubMed database integration.
 
@@ -25,6 +25,7 @@ ii_search_4b/
 │   ├── __init__.py              # Core package initialization
 │   ├── code_executor.py         # Secure Python code execution with Firejail
 │   ├── medical_search_server.py # FastAPI medical search server
+|   ├── google_search_client.py  # Google search API client [Serpdev]
 │   └── search_client.py         # Medical RAG search API client
 └── README.md                    # Project documentation
 ```

@@ -18,7 +18,10 @@ def extract_hyperlinks(soup: BeautifulSoup, base_url: str) -> List[Tuple[str, st
     Returns:
         List[Tuple[str, str]]: The extracted hyperlinks
     """
-    return [(link.text, urljoin(base_url, link["href"])) for link in soup.find_all("a", href=True)]
+    return [
+        (link.text, urljoin(base_url, link["href"]))
+        for link in soup.find_all("a", href=True)
+    ]
 
 
 def format_hyperlinks(hyperlinks: List[Tuple[str, str]]) -> List[str]:

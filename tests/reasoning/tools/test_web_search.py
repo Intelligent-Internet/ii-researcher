@@ -7,7 +7,6 @@ from ii_researcher.reasoning.config import ConfigConstants, get_config
 
 
 class TestWebSearchTool:
-
     def setup_method(self):
         """Set up for each test."""
         # Reset the class variable before each test to ensure test isolation
@@ -22,12 +21,12 @@ class TestWebSearchTool:
             {
                 "title": "Test Title 1",
                 "url": "https://test1.com",
-                "content": "Test content 1"
+                "content": "Test content 1",
             },
             {
                 "title": "Test Title 2",
                 "url": "https://test2.com",
-                "content": "Test content 2"
+                "content": "Test content 2",
             },
         ]
 
@@ -36,7 +35,7 @@ class TestWebSearchTool:
         WebSearchTool.reset()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_no_queries(self, mock_search_client):
         """Test execute with no queries."""
         result = await self.web_search_tool.execute(queries=[])
@@ -44,7 +43,7 @@ class TestWebSearchTool:
         mock_search_client.assert_not_called()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_single_query(self, mock_search_client):
         """Test execute with a single query."""
         # Set up mock
@@ -75,7 +74,7 @@ class TestWebSearchTool:
         assert self.test_query in WebSearchTool._searched_queries
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_multiple_queries(self, mock_search_client):
         """Test execute with multiple queries."""
         # Set up mock
@@ -98,7 +97,7 @@ class TestWebSearchTool:
             assert query in WebSearchTool._searched_queries
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_max_queries_limit(self, mock_search_client):
         """Test execute respects the max_search_queries limit."""
         # Set up mock
@@ -126,7 +125,7 @@ class TestWebSearchTool:
             assert excess_queries[i] not in WebSearchTool._searched_queries
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_duplicate_query(self, mock_search_client):
         """Test execute with a duplicate query."""
         # Set up mock
@@ -141,14 +140,16 @@ class TestWebSearchTool:
         result = await self.web_search_tool.execute(queries=[self.test_query])
 
         # Check that the duplicate message is in the result
-        expected_msg = ConfigConstants.DUPLICATE_QUERY_TEMPLATE.format(query=self.test_query)
+        expected_msg = ConfigConstants.DUPLICATE_QUERY_TEMPLATE.format(
+            query=self.test_query
+        )
         assert expected_msg in result
 
         # Verify SearchClient was not called for the duplicate query
         mock_search_client.assert_not_called()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_with_tool_history(self, mock_search_client):
         """Test execute with tool_history parameter."""
         # Set up mock
@@ -157,14 +158,16 @@ class TestWebSearchTool:
         mock_search_client.return_value = mock_instance
 
         # Execute with tool_history
-        await self.web_search_tool.execute(tool_history=self.tool_history, queries=[self.test_query])
+        await self.web_search_tool.execute(
+            tool_history=self.tool_history, queries=[self.test_query]
+        )
 
         # Verify URLs were added to tool_history
         for result in self.mock_search_results:
-            assert result['url'] in self.tool_history.get_searched_queries()
+            assert result["url"] in self.tool_history.get_searched_queries()
 
     @pytest.mark.asyncio
-    @patch('ii_researcher.reasoning.tools.web_search.SearchClient')
+    @patch("ii_researcher.reasoning.tools.web_search.SearchClient")
     async def test_execute_search_error(self, mock_search_client):
         """Test execute handles search errors."""
         # Set up mock to raise an exception

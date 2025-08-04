@@ -1,8 +1,11 @@
 # tests/tool_clients/compressors/test_llm_compressor.py
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import patch
 
-from ii_researcher.tool_clients.compressor.llm_compressor import LLMCompressor, parse_segment_numbers
+from ii_researcher.tool_clients.compressor.llm_compressor import (
+    LLMCompressor,
+    parse_segment_numbers,
+)
 
 
 def test_parse_segment_numbers_single_number():
@@ -57,7 +60,9 @@ def test_parse_segment_numbers_whitespace():
 async def test_llm_compressor_acompress():
     """Test LLMCompressor's acompress method."""
     # Mock extract_relevant_segments
-    with patch("ii_researcher.tool_clients.compressor.llm_compressor.extract_relevant_segments") as mock_extract:
+    with patch(
+        "ii_researcher.tool_clients.compressor.llm_compressor.extract_relevant_segments"
+    ) as mock_extract:
         mock_extract.return_value = "2-3,5"
 
         compressor = LLMCompressor()
@@ -85,7 +90,9 @@ async def test_llm_compressor_acompress():
 async def test_llm_compressor_acompress_empty_result():
     """Test LLMCompressor's acompress method when no segments are relevant."""
     # Mock extract_relevant_segments to return empty string
-    with patch("ii_researcher.tool_clients.compressor.llm_compressor.extract_relevant_segments") as mock_extract:
+    with patch(
+        "ii_researcher.tool_clients.compressor.llm_compressor.extract_relevant_segments"
+    ) as mock_extract:
         mock_extract.return_value = ""
 
         compressor = LLMCompressor()
@@ -104,8 +111,12 @@ async def test_llm_compressor_acompress_empty_result():
 async def test_llm_compressor_acompress_invalid_segment_number():
     """Test LLMCompressor's acompress method with invalid segment numbers."""
     # Mock extract_relevant_segments to return numbers outside valid range
-    with patch("ii_researcher.tool_clients.compressor.llm_compressor.extract_relevant_segments") as mock_extract:
-        mock_extract.return_value = "0,2,4,6"  # 0 is invalid (1-indexed), 6 is valid but high
+    with patch(
+        "ii_researcher.tool_clients.compressor.llm_compressor.extract_relevant_segments"
+    ) as mock_extract:
+        mock_extract.return_value = (
+            "0,2,4,6"  # 0 is invalid (1-indexed), 6 is valid but high
+        )
 
         compressor = LLMCompressor()
         chunks = ["chunk1", "chunk2", "chunk3", "chunk4", "chunk5"]

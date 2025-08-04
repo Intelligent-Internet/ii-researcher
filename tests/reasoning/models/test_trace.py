@@ -1,5 +1,4 @@
 # tests/reasoning/models/test_trace.py
-import pytest
 
 from ii_researcher.reasoning.models.trace import Turn, Trace
 from ii_researcher.reasoning.models.output import ModelOutput
@@ -8,7 +7,6 @@ from ii_researcher.reasoning.config import ConfigConstants
 
 
 class TestTurn:
-
     def test_init(self):
         """Test basic Turn initialization."""
         output = ModelOutput(raw="Test output")
@@ -66,7 +64,6 @@ class TestTurn:
 
 
 class TestTrace:
-
     def test_init(self):
         """Test basic Trace initialization."""
         query = "Test query"
