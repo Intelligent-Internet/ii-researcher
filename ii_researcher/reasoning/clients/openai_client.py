@@ -28,7 +28,9 @@ class OpenAIClient:
             base_url=self.config.llm.base_url,
         )
 
-    def _get_messages(self, trace: Trace, instructions: Optional[str] = None) -> List[Dict[str, Any]]:
+    def _get_messages(
+        self, trace: Trace, instructions: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         """Get the messages for the OpenAI API."""
 
         available_tools = format_tool_descriptions()
@@ -37,14 +39,8 @@ class OpenAIClient:
             current_date=datetime.now().strftime("%a, %d %b %Y %H:%M:%S GMT"),
         )
         messages = [
-            {
-                "role": "system",
-                "content": system_prompt
-            },
-            {
-                "role": "user",
-                "content": trace.query
-            },
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": trace.query},
             {
                 "role": "assistant",
                 "content": trace.to_string(instructions),
@@ -53,7 +49,9 @@ class OpenAIClient:
         ]
         return messages
 
-    def generate_completion(self, trace: Trace, instructions: Optional[str] = None) -> Any:
+    def generate_completion(
+        self, trace: Trace, instructions: Optional[str] = None
+    ) -> Any:
         """Generate a completion using the OpenAI API."""
         messages = self._get_messages(trace, instructions)
 
@@ -71,9 +69,9 @@ class OpenAIClient:
             logging.error("Error generating completion: %s", str(e))
             raise
 
-    async def generate_completion_stream(self,
-                                         trace: Trace,
-                                         instructions: Optional[str] = None) -> AsyncGenerator[str, None]:
+    async def generate_completion_stream(
+        self, trace: Trace, instructions: Optional[str] = None
+    ) -> AsyncGenerator[str, None]:
         """Generate a streaming completion using the OpenAI API."""
         messages = self._get_messages(trace, instructions)
 

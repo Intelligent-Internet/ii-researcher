@@ -3,7 +3,6 @@ import yt_dlp
 
 
 class YoutubeScraper:
-
     def __init__(self, link, session=None):
         self.link = link
         self.session = session
@@ -36,7 +35,9 @@ class YoutubeScraper:
             automatic_captions = info.get("automatic_captions", {})
 
             # Choose manual subtitles first, otherwise fallback to auto captions
-            subtitle_list = subtitles.get(self.lang, []) or automatic_captions.get(self.lang, [])
+            subtitle_list = subtitles.get(self.lang, []) or automatic_captions.get(
+                self.lang, []
+            )
 
             if not subtitle_list:
                 return "No subtitles available for the requested language."

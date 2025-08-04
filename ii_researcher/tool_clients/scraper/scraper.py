@@ -82,11 +82,16 @@ class Scraper:
             init(autoreset=True)
             print(Fore.YELLOW + f"{pkg_inst_name} not found. Attempting to install...")
             try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", pkg_inst_name])
+                subprocess.check_call(
+                    [sys.executable, "-m", "pip", "install", pkg_inst_name]
+                )
                 print(Fore.GREEN + f"{pkg_inst_name} installed successfully.")
             except subprocess.CalledProcessError:
-                raise ImportError(Fore.RED + f"Unable to install {pkg_inst_name}. Please install manually with "
-                                  f"`pip install -U {pkg_inst_name}`")
+                raise ImportError(
+                    Fore.RED
+                    + f"Unable to install {pkg_inst_name}. Please install manually with "
+                    f"`pip install -U {pkg_inst_name}`"
+                )
 
     def extract_data_from_url(self, link, session):
         """
@@ -113,7 +118,9 @@ class Scraper:
 
             # Log results
             self.logger.info("\nTitle: %s", title)
-            self.logger.info("Content length: %d characters", len(content) if content else 0)
+            self.logger.info(
+                "Content length: %d characters", len(content) if content else 0
+            )
             self.logger.info("URL: %s", link)
             self.logger.info("=" * 50)
 

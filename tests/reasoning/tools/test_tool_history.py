@@ -3,7 +3,6 @@ from ii_researcher.reasoning.tools.tool_history import ToolHistory
 
 
 class TestToolHistory(unittest.TestCase):
-
     def setUp(self):
         """Set up a new ToolHistory instance for each test."""
         self.tool_history = ToolHistory()

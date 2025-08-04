@@ -7,7 +7,6 @@ from .base import Compressor
 
 
 class ContextCompressor:
-
     def __init__(
         self,
         compressors: List[Compressor],
@@ -25,24 +24,35 @@ class ContextCompressor:
         self.compressors = compressors
         self.max_output_words = max_output_words
         self.max_input_words = max_input_words
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size, chunk_overlap=chunk_overlap
+        )
 
     async def acompress(self, context, title, query) -> str:
-        context = " ".join(context.split()[:self.max_input_words])
+        context = " ".join(context.split()[: self.max_input_words])
         chunks = self.text_splitter.split_text(context)
 
         words_in_chunks = [len(chunk.split()) for chunk in chunks]
 
         compressor_results = await asyncio.gather(
-            *[compressor.acompress(chunks, title, query) for compressor in self.compressors])
+            *[
+                compressor.acompress(chunks, title, query)
+                for compressor in self.compressors
+            ]
+        )
 
-        set_compressor_results = [set(compressor_result) for compressor_result in compressor_results]
+        set_compressor_results = [
+            set(compressor_result) for compressor_result in compressor_results
+        ]
 
         # assert that all compressor results are subsets of the chunks
         all_chunks_set = set(range(len(chunks)))
         for compressor_result in compressor_results:
-            assert set(compressor_result).issubset(
-                all_chunks_set), f"Compressor result {compressor_result} is not a subset of all chunks {all_chunks_set}"
+            assert set(
+                compressor_result
+            ).issubset(
+                all_chunks_set
+            ), f"Compressor result {compressor_result} is not a subset of all chunks {all_chunks_set}"
 
         intersection = set.intersection(*set_compressor_results)
         union = set.union(*set_compressor_results)
@@ -54,7 +64,9 @@ class ContextCompressor:
         if total_words_in_intersection > self.max_output_words:
             # Since all compressors agree on intersection items, use the first compressor's
             # ordering to determine relevance (already sorted by decreasing relevance)
-            sorted_intersection = [i for i in compressor_results[0] if i in intersection]
+            sorted_intersection = [
+                i for i in compressor_results[0] if i in intersection
+            ]
 
             # Keep only the most relevant chunks that fit within the word limit
             current_words = 0
@@ -90,7 +102,9 @@ class ContextCompressor:
 
             # Add remaining chunks in order of relevance until we hit the limit
             # Sort by ascending rank (lower rank = higher relevance)
-            sorted_remaining = sorted(union - intersection, key=lambda idx: chunk_ranks[idx])
+            sorted_remaining = sorted(
+                union - intersection, key=lambda idx: chunk_ranks[idx]
+            )
             for chunk_idx in sorted_remaining:
                 if current_words + words_in_chunks[chunk_idx] <= self.max_output_words:
                     result_indices.append(chunk_idx)

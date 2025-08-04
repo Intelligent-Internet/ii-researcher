@@ -4,6 +4,7 @@ from ii_researcher.reasoning.config import ConfigConstants, get_config
 from ii_researcher.reasoning.tools.base import BaseTool
 from ii_researcher.reasoning.tools.registry import register_tool
 from ii_researcher.reasoning.tools.tool_history import ToolHistory
+
 # Import the original tool implementation
 from ii_researcher.tool_clients.scrape_client import ScrapeClient
 
@@ -13,9 +14,11 @@ class WebScraperTool(BaseTool):
     """Tool for scraping web pages."""
 
     name = "page_visit"
-    description = ("Retrieves the content of a webpage by accessing the specified URL. "
-                   "This tool simulates a visit to the website and returns the full HTML "
-                   "source code of the page as a string")
+    description = (
+        "Retrieves the content of a webpage by accessing the specified URL. "
+        "This tool simulates a visit to the website and returns the full HTML "
+        "source code of the page as a string"
+    )
     argument_schema = {
         "urls": {
             "type": "list",
@@ -43,7 +46,7 @@ class WebScraperTool(BaseTool):
             return "No URLs provided."
 
         # Limit the number of URLs
-        urls = urls[:config.tool.max_urls_to_visit]
+        urls = urls[: config.tool.max_urls_to_visit]
 
         result_str = ""
         tasks = []
@@ -51,7 +54,9 @@ class WebScraperTool(BaseTool):
         for url in urls:
             # Check if the URL has already been visited
             if url in self._visited_urls:
-                result_str += (ConfigConstants.DUPLICATE_URL_TEMPLATE.format(url=url) + "\n")
+                result_str += (
+                    ConfigConstants.DUPLICATE_URL_TEMPLATE.format(url=url) + "\n"
+                )
                 continue
 
             # Add to visited URLs

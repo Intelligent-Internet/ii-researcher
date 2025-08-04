@@ -15,7 +15,6 @@ knowledge.json
 questions.json
 answers.json
 queries.json
-*.md
 *.html
 *.js
 litellm.yaml

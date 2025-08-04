@@ -5,7 +5,6 @@ import requests
 
 
 class FirecrawlScraper:
-
     def __init__(self, link, session=None):
         """
         Initialize the scraper with a link and an optional session.
@@ -31,7 +30,9 @@ class FirecrawlScraper:
             "Authorization": f"Bearer {api_key}",
         }
         payload = {"url": self.link, "onlyMainContent": False, "formats": ["markdown"]}
-        response = requests.request("POST", base_url, headers=headers, data=json.dumps(payload))
+        response = requests.request(
+            "POST", base_url, headers=headers, data=json.dumps(payload)
+        )
         if response.status_code == 200:
             data = response.json().get("data")
             return data.get("markdown", ""), data.get("metadata").get("title")

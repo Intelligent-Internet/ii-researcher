@@ -13,10 +13,10 @@ class Passage(TypedDict):
 async def extract_relevant_segments(passage: Passage) -> str:
     """
     Extract relevant segment numbers from a passage based on a query.
-    
+
     Args:
         passage: A dictionary containing 'text' and 'query' fields
-        
+
     Returns:
         A dictionary with a 'segment_list' field containing comma-separated segment numbers or ranges
     """
@@ -53,13 +53,12 @@ async def extract_relevant_segments(passage: Passage) -> str:
     }}
     """
 
-    response = await client.chat.completions.create(model=os.environ.get("FAST_LLM"),
-                                                    messages=[{
-                                                        "role": "user",
-                                                        "content": prompt
-                                                    }],
-                                                    temperature=0.0,
-                                                    response_format={"type": "json_object"})
+    response = await client.chat.completions.create(
+        model=os.environ.get("FAST_LLM"),
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0,
+        response_format={"type": "json_object"},
+    )
 
     try:
         segment_list = json.loads(response.choices[0].message.content.strip())

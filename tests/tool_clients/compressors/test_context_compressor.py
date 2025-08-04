@@ -14,7 +14,9 @@ class MockCompressor(Compressor):
         self.return_indices = return_indices
         self.acompress = AsyncMock(return_value=return_indices)
 
-    async def acompress(self, context: str, title: str = "", query: str = "") -> List[int]:
+    async def acompress(
+        self, context: str, title: str = "", query: str = ""
+    ) -> List[int]:
         """Implement the abstract method from the base class"""
         return self.acompress(context=context, title=title, query=query)
 
@@ -61,9 +63,9 @@ async def test_acompress_intersection_scenario(sample_text):
         chunk_overlap=0,
     )
 
-    result = await context_compressor_intersection_scenario.acompress(context=sample_text,
-                                                                      title="Sample Text",
-                                                                      query="relevant information")
+    result = await context_compressor_intersection_scenario.acompress(
+        context=sample_text, title="Sample Text", query="relevant information"
+    )
 
     # Verify the result is a string
     assert isinstance(result, str)
@@ -102,9 +104,9 @@ async def test_acompress_union_scenario(sample_text):
         chunk_overlap=0,
     )
 
-    result = await context_compressor_union_scenario.acompress(context=sample_text,
-                                                               title="Sample Text",
-                                                               query="relevant information")
+    result = await context_compressor_union_scenario.acompress(
+        context=sample_text, title="Sample Text", query="relevant information"
+    )
 
     # Verify the result is a string
     assert isinstance(result, str)
@@ -141,9 +143,9 @@ async def test_acompress_small_union_scenario(sample_text):
         chunk_overlap=0,
     )
 
-    result = await context_compressor_small_union_scenario.acompress(context=sample_text,
-                                                                     title="Sample Text",
-                                                                     query="relevant information")
+    result = await context_compressor_small_union_scenario.acompress(
+        context=sample_text, title="Sample Text", query="relevant information"
+    )
 
     # Verify the result is a string
     assert isinstance(result, str)
@@ -177,7 +179,9 @@ async def test_acompress_empty_input():
         chunk_overlap=0,
     )
 
-    result = await context_compressor.acompress(context="", title="Empty Text", query="relevant information")
+    result = await context_compressor.acompress(
+        context="", title="Empty Text", query="relevant information"
+    )
 
     # Result should be an empty string since there are no chunks
     assert result == ""
@@ -199,7 +203,9 @@ async def test_acompress_single_chunk():
 
     short_text = "This is a short piece of text that will fit in a single chunk."
 
-    result = await context_compressor.acompress(context=short_text, title="Short Text", query="relevant information")
+    result = await context_compressor.acompress(
+        context=short_text, title="Short Text", query="relevant information"
+    )
 
     # Result should contain the short text
     assert short_text in result
@@ -259,7 +265,9 @@ async def test_acompress_truncates_input():
 
     long_text = "This is a " + "word " * 20 + "with many words."
 
-    result = await context_compressor.acompress(context=long_text, title="Long Text", query="relevant information")
+    result = await context_compressor.acompress(
+        context=long_text, title="Long Text", query="relevant information"
+    )
 
     # Result should only contain a truncated version of the input
     # (specifically the first max_input_words words)

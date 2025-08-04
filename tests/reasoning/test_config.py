@@ -1,14 +1,19 @@
 import os
 from unittest.mock import patch
-import pytest
-from datetime import datetime, timezone
 
-from ii_researcher.reasoning.config import (ConfigConstants, ToolConfig, LLMConfig, AgentConfig, ReportConfig,
-                                            get_config, get_report_config, update_config)
+from ii_researcher.reasoning.config import (
+    ConfigConstants,
+    ToolConfig,
+    LLMConfig,
+    AgentConfig,
+    ReportConfig,
+    get_config,
+    get_report_config,
+    update_config,
+)
 
 
 class TestConfigConstants:
-
     def test_constants_exist(self):
         # Verify all constants are defined
         assert hasattr(ConfigConstants, "THINK_TAG_OPEN")
@@ -38,7 +43,6 @@ class TestConfigConstants:
 
 
 class TestToolConfig:
-
     def test_default_values(self):
         config = ToolConfig()
         assert config.max_search_results == 4
@@ -49,8 +53,10 @@ class TestToolConfig:
 
 
 class TestLLMConfig:
-
-    @patch.dict(os.environ, {"R_MODEL": "test-model", "R_TEMPERATURE": "0.5", "OPENAI_API_KEY": "test-key"})
+    @patch.dict(
+        os.environ,
+        {"R_MODEL": "test-model", "R_TEMPERATURE": "0.5", "OPENAI_API_KEY": "test-key"},
+    )
     def test_env_variable_config(self):
         config = LLMConfig()
         assert config.model == "test-model"
@@ -69,7 +75,10 @@ class TestLLMConfig:
     def test_get_effective_stop_sequence(self):
         config = LLMConfig()
         # Without turns
-        assert config.get_effective_stop_sequence(trace_has_turns=False) == ConfigConstants.DEFAULT_STOP_SEQUENCE
+        assert (
+            config.get_effective_stop_sequence(trace_has_turns=False)
+            == ConfigConstants.DEFAULT_STOP_SEQUENCE
+        )
 
         # With turns - should include THINK_TAG_CLOSE
         with_turns_stop = config.get_effective_stop_sequence(trace_has_turns=True)
@@ -80,7 +89,6 @@ class TestLLMConfig:
 
 
 class TestAgentConfig:
-
     def test_config_initialization(self):
         config = AgentConfig()
         assert isinstance(config.tool, ToolConfig)
@@ -90,12 +98,13 @@ class TestAgentConfig:
 
     def test_templates(self):
         config = AgentConfig()
-        assert config.duplicate_query_template == ConfigConstants.DUPLICATE_QUERY_TEMPLATE
+        assert (
+            config.duplicate_query_template == ConfigConstants.DUPLICATE_QUERY_TEMPLATE
+        )
         assert config.duplicate_url_template == ConfigConstants.DUPLICATE_URL_TEMPLATE
 
 
 class TestReportConfig:
-
     def test_config_initialization(self):
         config = ReportConfig()
         assert isinstance(config.llm, LLMConfig)
@@ -134,8 +143,9 @@ class TestReportConfig:
         current_subtopic = "Topic 1"
         query = "Sample query"
 
-        messages = config.generate_subtopic_report_messages(trace, content_from_previous, subtopics, current_subtopic,
-                                                            query)
+        messages = config.generate_subtopic_report_messages(
+            trace, content_from_previous, subtopics, current_subtopic, query
+        )
 
         assert len(messages) == 2
         assert messages[0]["role"] == "system"
@@ -160,7 +170,6 @@ class TestReportConfig:
 
 
 class TestConfigFunctions:
-
     def test_get_config(self):
         # Verify we get the singleton instance
         config = get_config()

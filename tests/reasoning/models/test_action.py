@@ -4,7 +4,6 @@ from ii_researcher.reasoning.models.action import Action
 
 
 class TestAction:
-
     def test_init(self):
         """Test basic Action initialization."""
         action = Action(name="test_action", arguments={"arg1": "value1", "arg2": 42})
@@ -23,11 +22,15 @@ class TestAction:
         string = 'analyze(text="sample text", max_tokens=100, include_metadata=True)'
         action = Action.from_string(string)
         assert action.name == "analyze"
-        assert action.arguments == {"text": "sample text", "max_tokens": 100, "include_metadata": True}
+        assert action.arguments == {
+            "text": "sample text",
+            "max_tokens": 100,
+            "include_metadata": True,
+        }
 
     def test_from_string_no_args(self):
         """Test parsing action string with no arguments."""
-        string = 'list_all()'
+        string = "list_all()"
         action = Action.from_string(string)
         assert action.name == "list_all"
         assert action.arguments == {}
@@ -37,7 +40,12 @@ class TestAction:
         string = 'complex_action(numbers=[1, 2, 3], mapping={"a": 1, "b": 2}, flag=True, value=None)'
         action = Action.from_string(string)
         assert action.name == "complex_action"
-        assert action.arguments == {"numbers": [1, 2, 3], "mapping": {"a": 1, "b": 2}, "flag": True, "value": None}
+        assert action.arguments == {
+            "numbers": [1, 2, 3],
+            "mapping": {"a": 1, "b": 2},
+            "flag": True,
+            "value": None,
+        }
 
     def test_from_string_nested_structures(self):
         """Test parsing action string with nested data structures."""
@@ -55,25 +63,36 @@ class TestAction:
 
     def test_to_string_multiple_args(self):
         """Test converting Action with multiple arguments to string."""
-        action = Action(name="analyze", arguments={"text": "sample text", "max_tokens": 100, "include_metadata": True})
+        action = Action(
+            name="analyze",
+            arguments={
+                "text": "sample text",
+                "max_tokens": 100,
+                "include_metadata": True,
+            },
+        )
         result = action.to_string()
         # Since dict order isn't guaranteed, we check parts of the string
-        assert 'analyze(' in result
+        assert "analyze(" in result
         assert 'text="sample text"' in result
-        assert 'max_tokens=100' in result
-        assert 'include_metadata=True' in result
+        assert "max_tokens=100" in result
+        assert "include_metadata=True" in result
 
     def test_to_string_no_args(self):
         """Test converting Action with no arguments to string."""
         action = Action(name="list_all", arguments={})
         result = action.to_string()
-        assert result == 'list_all()'
+        assert result == "list_all()"
 
     def test_from_string_invalid_formats(self):
         """Test error handling for invalid string formats."""
         invalid_strings = [
-            "not_a_function", "missing_parens", "incorrect(syntax", "wrong_syntax)", "invalid argument=value)",
-            "no_name(arg=value)"
+            "not_a_function",
+            "missing_parens",
+            "incorrect(syntax",
+            "wrong_syntax)",
+            "invalid argument=value)",
+            "no_name(arg=value)",
         ]
 
         for string in invalid_strings:
@@ -92,10 +111,10 @@ class TestAction:
         result = action.to_string()
 
         # Extract the parts since argument order might differ
-        assert 'test_action(' in result
+        assert "test_action(" in result
         assert 'arg1="value"' in result
-        assert 'arg2=42' in result
-        assert 'flag=True' in result
+        assert "arg2=42" in result
+        assert "flag=True" in result
 
         # Verify we can parse it back again
         action2 = Action.from_string(result)

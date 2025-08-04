@@ -1,21 +1,25 @@
 import pytest
-from unittest.mock import MagicMock, patch, call
-import requests
-from bs4 import BeautifulSoup
+from unittest.mock import MagicMock, patch
 
 from ii_researcher.tool_clients.scraper.scraper import Scraper, markdown_to_text
-from ii_researcher.tool_clients.scraper.beautiful_soup.beautiful_soup import BeautifulSoupScraper
+from ii_researcher.tool_clients.scraper.beautiful_soup.beautiful_soup import (
+    BeautifulSoupScraper,
+)
 from ii_researcher.tool_clients.scraper.pymupdf.pymupdf import PyMuPDFScraper
 from ii_researcher.tool_clients.scraper.youtube.youtube import YoutubeScraper
-from ii_researcher.tool_clients.scraper.tavily_extract.tavily_extract import TavilyExtract
+from ii_researcher.tool_clients.scraper.tavily_extract.tavily_extract import (
+    TavilyExtract,
+)
 from ii_researcher.tool_clients.scraper.firecrawl.firecrawl import FirecrawlScraper
 from ii_researcher.tool_clients.scraper.browser.browser import BrowserScraper
 from ii_researcher.tool_clients.scraper.jina.jina import JinaScraper
 
-class TestMarkdownToText:
 
+class TestMarkdownToText:
     def test_markdown_to_text(self):
-        markdown_str = "# Header\n\nThis is **bold** text with a [link](https://example.com)"
+        markdown_str = (
+            "# Header\n\nThis is **bold** text with a [link](https://example.com)"
+        )
         result = markdown_to_text(markdown_str)
         assert "Header" in result
         assert "This is bold text with a link" in result
@@ -23,7 +27,6 @@ class TestMarkdownToText:
 
 
 class TestScraper:
-
     @pytest.fixture
     def mock_session(self):
         session = MagicMock()
@@ -33,8 +36,10 @@ class TestScraper:
     @pytest.fixture
     def urls(self):
         return [
-            "https://example.com", "https://example.com/doc.pdf", "https://arxiv.org/abs/1234.5678",
-            "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            "https://example.com",
+            "https://example.com/doc.pdf",
+            "https://arxiv.org/abs/1234.5678",
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         ]
 
     @patch("ii_researcher.tool_clients.scraper.scraper.requests.Session")
@@ -62,26 +67,10 @@ class TestScraper:
         scraper = Scraper(urls, "Mozilla/5.0", "bs")
         scraper.extract_data_from_url = MagicMock()
         mock_extract_results = [
-            {
-                "url": urls[0],
-                "raw_content": "content1",
-                "title": "title1"
-            },
-            {
-                "url": urls[1],
-                "raw_content": "content2",
-                "title": "title2"
-            },
-            {
-                "url": urls[2],
-                "raw_content": None,
-                "title": "title3"
-            },
-            {
-                "url": urls[3],
-                "raw_content": "content4",
-                "title": "title4"
-            },
+            {"url": urls[0], "raw_content": "content1", "title": "title1"},
+            {"url": urls[1], "raw_content": "content2", "title": "title2"},
+            {"url": urls[2], "raw_content": None, "title": "title3"},
+            {"url": urls[3], "raw_content": "content4", "title": "title4"},
         ]
         scraper.extract_data_from_url.side_effect = mock_extract_results
 
@@ -132,7 +121,8 @@ class TestScraper:
         mock_scraper.return_value = mock_scraper_instance
         mock_scraper_instance.scrape.return_value = (
             "This is a long content with more than 100 characters to pass the length check in extract_data_from_url. It needs to be quite verbose.",
-            "Title")
+            "Title",
+        )
 
         mock_markdown_to_text.return_value = "Converted markdown"
         mock_clean.return_value = "Cleaned content"
@@ -145,7 +135,9 @@ class TestScraper:
         # Verify
         mock_scraper.assert_called_with(link, mock_session)
         mock_scraper_instance.scrape.assert_called()
-        mock_markdown_to_text.assert_called_with(mock_scraper_instance.scrape.return_value[0])
+        mock_markdown_to_text.assert_called_with(
+            mock_scraper_instance.scrape.return_value[0]
+        )
         mock_clean.assert_called()
 
         assert result["url"] == link
@@ -162,7 +154,10 @@ class TestScraper:
         mock_scraper = MagicMock()
         mock_scraper_instance = MagicMock()
         mock_scraper.return_value = mock_scraper_instance
-        mock_scraper_instance.scrape.return_value = ("Long content" * 20, "Title")  # Content > 100 chars
+        mock_scraper_instance.scrape.return_value = (
+            "Long content" * 20,
+            "Title",
+        )  # Content > 100 chars
 
         # Return the mock scraper from get_scraper
         scraper = Scraper([link], "Mozilla/5.0", "bs")
@@ -181,7 +176,10 @@ class TestScraper:
         mock_scraper = MagicMock()
         mock_scraper_instance = MagicMock()
         mock_scraper.return_value = mock_scraper_instance
-        mock_scraper_instance.scrape.return_value = ("Short", "Title")  # Content < 100 chars
+        mock_scraper_instance.scrape.return_value = (
+            "Short",
+            "Title",
+        )  # Content < 100 chars
 
         scraper.get_scraper = MagicMock(return_value=mock_scraper)
 
@@ -228,8 +226,10 @@ class TestScraper:
 
         # Test different YouTube URL formats
         youtube_urls = [
-            "https://www.youtube.com/watch?v=dQw4w9WgXcQ", "https://youtube.com/watch?v=dQw4w9WgXcQ",
-            "https://www.youtube.com/shorts/dQw4w9WgXcQ", "https://youtu.be/dQw4w9WgXcQ"
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "https://youtube.com/watch?v=dQw4w9WgXcQ",
+            "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+            "https://youtu.be/dQw4w9WgXcQ",
         ]
 
         for url in youtube_urls:

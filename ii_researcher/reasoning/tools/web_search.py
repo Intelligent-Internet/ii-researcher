@@ -1,5 +1,4 @@
 import logging
-from typing import Any, Dict
 from ii_researcher.reasoning.config import ConfigConstants, get_config
 from ii_researcher.reasoning.tools.base import BaseTool
 from ii_researcher.reasoning.tools.registry import register_tool
@@ -41,13 +40,15 @@ class WebSearchTool(BaseTool):
             return "No search queries provided."
 
         # Limit the number of queries
-        queries = queries[:config.tool.max_search_queries]
+        queries = queries[: config.tool.max_search_queries]
 
         result_str = ""
         for query in queries:
             # Check if the query has already been searched
             if query in self._searched_queries:
-                result_str += (ConfigConstants.DUPLICATE_QUERY_TEMPLATE.format(query=query) + "\n")
+                result_str += (
+                    ConfigConstants.DUPLICATE_QUERY_TEMPLATE.format(query=query) + "\n"
+                )
                 continue
 
             try:
@@ -73,10 +74,12 @@ class WebSearchTool(BaseTool):
                     result_str += "-----------------------------------\n"
 
                 if tool_history is not None:
-                    tool_history.add_searched_queries([item['url'] for item in results])
+                    tool_history.add_searched_queries([item["url"] for item in results])
 
             except Exception as e:
-                logging.error("Error during web search for query '%s': %s", query, str(e))
+                logging.error(
+                    "Error during web search for query '%s': %s", query, str(e)
+                )
                 result_str += f"Error searching for '{query}': {str(e)}\n"
 
         return result_str

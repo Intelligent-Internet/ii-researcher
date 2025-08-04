@@ -1,12 +1,19 @@
 import unittest
-from unittest.mock import patch, MagicMock
-from ii_researcher.reasoning.tools.registry import (ToolRegistry, registry, register_tool, get_tool, list_tools,
-                                                    get_all_tools, format_tool_descriptions)
+from ii_researcher.reasoning.tools.registry import (
+    ToolRegistry,
+    registry,
+    register_tool,
+    get_tool,
+    list_tools,
+    get_all_tools,
+    format_tool_descriptions,
+)
 from ii_researcher.reasoning.tools.base import BaseTool
 
 
 class MockTool(BaseTool):
     """Mock tool for testing."""
+
     name = "mock_tool"
     description = "Mock tool for testing"
     argument_schema = {"arg1": {"type": "string"}}
@@ -22,7 +29,6 @@ class MockTool(BaseTool):
 
 
 class TestToolRegistry(unittest.TestCase):
-
     def setUp(self):
         """Reset registry before each test."""
         # Keep a reference to the real tools
@@ -136,10 +142,12 @@ class TestToolRegistry(unittest.TestCase):
         """Test formatting tool descriptions."""
         registry.register(MockTool)
 
-        expected_description = "*You only have access to these tools:\n" + \
-                              "- mock_tool: Mock tool for testing\n" + \
-                              "    Takes inputs: {'arg1': {'type': 'string'}}\n" + \
-                              "    Returns an output of type: string"
+        expected_description = (
+            "*You only have access to these tools:\n"
+            + "- mock_tool: Mock tool for testing\n"
+            + "    Takes inputs: {'arg1': {'type': 'string'}}\n"
+            + "    Returns an output of type: string"
+        )
 
         self.assertEqual(registry.format_tool_descriptions(), expected_description)
 
@@ -148,6 +156,7 @@ class TestToolRegistry(unittest.TestCase):
 
     def test_tool_sorting_in_descriptions(self):
         """Test that web_search and page_visit tools come first in descriptions."""
+
         # Register tools in wrong order to test sorting
         @register_tool
         class ZTool(BaseTool):
@@ -211,7 +220,9 @@ class TestToolRegistry(unittest.TestCase):
 
         description = registry.format_tool_descriptions()
         # Check that web_search comes first
-        self.assertTrue(description.index("web_search") < description.index("page_visit"))
+        self.assertTrue(
+            description.index("web_search") < description.index("page_visit")
+        )
         # Check that page_visit comes before other tools
         self.assertTrue(description.index("page_visit") < description.index("a_tool"))
         self.assertTrue(description.index("page_visit") < description.index("z_tool"))

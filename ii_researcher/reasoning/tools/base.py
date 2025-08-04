@@ -23,10 +23,12 @@ class BaseTool(ABC):
         """Reset Tool State"""
         pass
 
-    async def execute_stream(self,
-                             stream_event: Callable[[str, Dict[str, Any]], None],
-                             tool_history: ToolHistory = None,
-                             **kwargs) -> str:
+    async def execute_stream(
+        self,
+        stream_event: Callable[[str, Dict[str, Any]], None],
+        tool_history: ToolHistory = None,
+        **kwargs,
+    ) -> str:
         """Execute the tool with the given arguments."""
         await stream_event("tool", {"name": self.name, "arguments": kwargs})
         await asyncio.sleep(0)

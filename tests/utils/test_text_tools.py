@@ -3,7 +3,6 @@ from ii_researcher.utils.text_tools import remove_all_line_breaks, choose_k
 
 
 class TestTextTools(unittest.TestCase):
-
     def test_remove_all_line_breaks(self):
         # Test basic line break removal
         input_text = "Hello\nWorld"

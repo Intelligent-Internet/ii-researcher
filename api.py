@@ -10,10 +10,14 @@ from fastapi.responses import StreamingResponse
 from ii_researcher.reasoning.agent import ReasoningAgent
 from ii_researcher.utils.stream import StreamManager
 
-app = FastAPI(title="Deep Search API", description="API for streaming Deep Search results")
+app = FastAPI(
+    title="Deep Search API", description="API for streaming Deep Search results"
+)
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 # Add CORS middleware
 app.add_middleware(
@@ -25,7 +29,9 @@ app.add_middleware(
 )
 
 
-async def handle_reasoning_event(stream_event: Callable[[str, Dict[str, Any]], None], token: str):
+async def handle_reasoning_event(
+    stream_event: Callable[[str, Dict[str, Any]], None], token: str
+):
     if stream_event:
         print(token, end="", flush=True)
         await stream_event("reasoning", {"reasoning": token})
@@ -37,12 +43,18 @@ async def stream_generator(question: str, max_steps: int = 20):
     stream_manager = StreamManager()
 
     search_task = None
-    reasoning_agent = ReasoningAgent(question=question, stream_event=stream_manager.create_event_message)
+    reasoning_agent = ReasoningAgent(
+        question=question, stream_event=stream_manager.create_event_message
+    )
 
     def handle_token(token):
-        return asyncio.create_task(handle_reasoning_event(stream_manager.create_event_message, token))
+        return asyncio.create_task(
+            handle_reasoning_event(stream_manager.create_event_message, token)
+        )
 
-    search_task = asyncio.create_task(reasoning_agent.run(on_token=handle_token, is_stream=True))
+    search_task = asyncio.create_task(
+        reasoning_agent.run(on_token=handle_token, is_stream=True)
+    )
 
     try:
         while True:
@@ -55,7 +67,9 @@ async def stream_generator(question: str, max_steps: int = 20):
             except asyncio.TimeoutError:
                 if search_task.done():
                     if search_task.exception():
-                        yield stream_manager.create_error_event(str(search_task.exception()))
+                        yield stream_manager.create_error_event(
+                            str(search_task.exception())
+                        )
                     try:
                         result = search_task.result()
                         yield stream_manager.create_complete_event(result)

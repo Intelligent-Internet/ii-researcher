@@ -56,7 +56,9 @@ class ReasoningAgent:
 
         logging.info("ReasoningAgent initialized with question: %s", question)
 
-    async def process_stream(self, stream_generator, callback: Optional[Callable[[str], None]] = None) -> str:
+    async def process_stream(
+        self, stream_generator, callback: Optional[Callable[[str], None]] = None
+    ) -> str:
         """Process a stream of tokens with timeout handling."""
         content = ""
         try:
@@ -91,7 +93,9 @@ class ReasoningAgent:
             action.arguments["question"] = self.question
             result = ""
             if self.stream_event:
-                result = await tool.execute_stream(self.stream_event, self.tool_history, **action.arguments)
+                result = await tool.execute_stream(
+                    self.stream_event, self.tool_history, **action.arguments
+                )
             else:
                 result = await tool.execute(self.tool_history, **action.arguments)
 
@@ -100,7 +104,9 @@ class ReasoningAgent:
             logging.error("Error executing action %s: %s", action.name, str(e))
             return f"Error executing {action.name}: {str(e)}", None
 
-    async def run(self, on_token: Optional[Callable[[str], None]] = None, is_stream: bool = False) -> str:
+    async def run(
+        self, on_token: Optional[Callable[[str], None]] = None, is_stream: bool = False
+    ) -> str:
         """Run the agent."""
         turn = 0
 
@@ -109,10 +115,14 @@ class ReasoningAgent:
             content = ""
             try:
                 if is_stream:
-                    stream_generator = self.client.generate_completion_stream(self.trace, self.instructions)
+                    stream_generator = self.client.generate_completion_stream(
+                        self.trace, self.instructions
+                    )
                     content = await self.process_stream(stream_generator, on_token)
                 else:
-                    content = self.client.generate_completion(self.trace, self.instructions)
+                    content = self.client.generate_completion(
+                        self.trace, self.instructions
+                    )
             except (asyncio.TimeoutError, asyncio.CancelledError) as e:
                 logging.error("Error generating completion: %s", str(e))
                 content = f"Error: {str(e)}"
@@ -121,7 +131,9 @@ class ReasoningAgent:
 
             # Parse the output
             try:
-                model_output = ModelOutput.from_string(content, tool_names=get_all_tools().keys())
+                model_output = ModelOutput.from_string(
+                    content, tool_names=get_all_tools().keys()
+                )
             except (ValueError, KeyError) as e:
                 logging.error("Error parsing model output: %s", str(e))
                 model_output = ModelOutput(raw=content)
@@ -134,26 +146,37 @@ class ReasoningAgent:
                 action_result, suffix = await self.execute_action(model_output.action)
 
                 # Add the turn to the trace
-                self.trace.turns.append(Turn(output=model_output, action_result=action_result, suffix=suffix))
+                self.trace.turns.append(
+                    Turn(
+                        output=model_output, action_result=action_result, suffix=suffix
+                    )
+                )
 
             else:
                 # Mark this as the last output
                 model_output.is_last = True
-                self.trace.turns.append(Turn(output=model_output, action_result="", suffix=None))
+                self.trace.turns.append(
+                    Turn(output=model_output, action_result="", suffix=None)
+                )
 
                 # Generate the report
                 try:
                     report_builder = ReportBuilder(self.stream_event)
                     if is_stream:
                         # Stream the report
-                        final_report = await report_builder.generate_stream(self.tool_history, self.trace,
-                                                                            self.report_type, on_token)
+                        final_report = await report_builder.generate_stream(
+                            self.tool_history, self.trace, self.report_type, on_token
+                        )
                     else:
-                        final_report = report_builder.generate(self.tool_history, self.trace, self.report_type)
+                        final_report = report_builder.generate(
+                            self.tool_history, self.trace, self.report_type
+                        )
 
                     # Create a final turn with the report
                     report_output = ModelOutput(raw=final_report, is_last=True)
-                    self.trace.turns.append(Turn(output=report_output, action_result="", suffix=None))
+                    self.trace.turns.append(
+                        Turn(output=report_output, action_result="", suffix=None)
+                    )
 
                     return final_report
 

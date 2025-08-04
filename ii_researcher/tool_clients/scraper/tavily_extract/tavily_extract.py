@@ -7,7 +7,6 @@ from ..utils import extract_title
 
 
 class TavilyExtract:
-
     def __init__(self, link, session=None):
         self.link = link
         self.session = session
@@ -23,7 +22,9 @@ class TavilyExtract:
         try:
             api_key = os.environ["TAVILY_API_KEY"]
         except KeyError as exc:
-            raise Exception("Tavily API key not found. Please set the TAVILY_API_KEY environment variable.") from exc
+            raise Exception(
+                "Tavily API key not found. Please set the TAVILY_API_KEY environment variable."
+            ) from exc
         return api_key
 
     def scrape(self) -> tuple:
@@ -45,7 +46,9 @@ class TavilyExtract:
 
             # Parse the HTML content of the response to create a BeautifulSoup object for the utility functions
             response_bs = self.session.get(self.link, timeout=4)
-            soup = BeautifulSoup(response_bs.content, "lxml", from_encoding=response_bs.encoding)
+            soup = BeautifulSoup(
+                response_bs.content, "lxml", from_encoding=response_bs.encoding
+            )
 
             # Since only a single link is provided to tavily_client, the results will contain only one entry.
             content = response["results"][0]["raw_content"]

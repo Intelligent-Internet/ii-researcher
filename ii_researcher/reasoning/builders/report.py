@@ -23,8 +23,9 @@ class Subtopics(BaseModel):
 
 
 class ReportBuilder:
-
-    def __init__(self, stream_event: Optional[Callable[[str, Dict[str, Any]], None]] = None):
+    def __init__(
+        self, stream_event: Optional[Callable[[str, Dict[str, Any]], None]] = None
+    ):
         self.config = get_report_config()
         self.client = OpenAI(
             api_key=self.config.llm.api_key,
@@ -36,7 +37,9 @@ class ReportBuilder:
         )
         self.stream_event = stream_event
 
-    def generate(self, tool_history: ToolHistory, trace: Trace, report_type: ReportType) -> str:
+    def generate(
+        self, tool_history: ToolHistory, trace: Trace, report_type: ReportType
+    ) -> str:
         if report_type == ReportType.BASIC:
             return self.generate_report(trace)
         elif report_type == ReportType.ADVANCED:
@@ -44,34 +47,44 @@ class ReportBuilder:
         else:
             raise ValueError(f"Invalid report type: {report_type}")
 
-    async def generate_stream(self,
-                              tool_history: ToolHistory,
-                              trace: Trace,
-                              report_type: ReportType,
-                              callback: Optional[Callable[[str], None]] = None) -> str:
+    async def generate_stream(
+        self,
+        tool_history: ToolHistory,
+        trace: Trace,
+        report_type: ReportType,
+        callback: Optional[Callable[[str], None]] = None,
+    ) -> str:
         if report_type == ReportType.BASIC:
             print("Generating basic report stream in generate_stream")
             return await self.generate_report_stream(trace, callback)
         elif report_type == ReportType.ADVANCED:
             print("Generating advanced report stream in generate_stream")
-            return await self.generate_advance_report_stream(tool_history, trace, callback)
+            return await self.generate_advance_report_stream(
+                tool_history, trace, callback
+            )
         else:
             raise ValueError(f"Invalid report type: {report_type}")
 
     def generate_report(self, trace: Trace) -> str:
         try:
-            messages = self.config.generate_report_messages(trace.to_string(), trace.query)
+            messages = self.config.generate_report_messages(
+                trace.to_string(), trace.query
+            )
             return self._generate_response(messages)
 
         except Exception as e:
             logging.error("Error generating report: %s", str(e))
             raise
 
-    async def generate_report_stream(self, trace: Trace, callback: Optional[Callable[[str], None]] = None) -> str:
+    async def generate_report_stream(
+        self, trace: Trace, callback: Optional[Callable[[str], None]] = None
+    ) -> str:
         """Generate a streaming report using the OpenAI API."""
 
         try:
-            messages = self.config.generate_report_messages(trace.to_string(), trace.query)
+            messages = self.config.generate_report_messages(
+                trace.to_string(), trace.query
+            )
             return await self._generate_stream(messages, callback)
 
         except Exception as e:
@@ -102,8 +115,9 @@ class ReportBuilder:
             content_from_previous_subtopics = introduction
             for i, subtopic in enumerate(subtopics, 1):
                 logging.info(f"Generating subtopic {i}/{len(subtopics)}: {subtopic}")
-                subtopic_content = self._generate_subtopic_report(trace, subtopic, content_from_previous_subtopics,
-                                                                  subtopics)
+                subtopic_content = self._generate_subtopic_report(
+                    trace, subtopic, content_from_previous_subtopics, subtopics
+                )
                 content_from_previous_subtopics += f"\n\n{subtopic_content}"
 
             references = self._generate_references(tool_history)
@@ -128,9 +142,13 @@ class ReportBuilder:
             introduction = await self._generate_introduction_stream(trace, callback)
             content_from_previous_subtopics = introduction
             for subtopic in subtopics:
-                subtopic_content = await self._generate_subtopic_report_stream(trace, subtopic,
-                                                                               content_from_previous_subtopics,
-                                                                               subtopics, callback)
+                subtopic_content = await self._generate_subtopic_report_stream(
+                    trace,
+                    subtopic,
+                    content_from_previous_subtopics,
+                    subtopics,
+                    callback,
+                )
                 content_from_previous_subtopics += f"\n\n{subtopic_content}"
             references = await self._generate_references_stream(tool_history, callback)
             full_report = content_from_previous_subtopics + references
@@ -140,12 +158,14 @@ class ReportBuilder:
             logging.error("Error generating advance report: %s", str(e))
             raise
 
-    async def _generate_introduction_stream(self,
-                                            trace: Trace,
-                                            callback: Optional[Callable[[str], None]] = None) -> str:
+    async def _generate_introduction_stream(
+        self, trace: Trace, callback: Optional[Callable[[str], None]] = None
+    ) -> str:
         try:
-            messages = self.config.generate_introduction_messages(trace.to_string(), trace.query)
-            logging.info(f"Generating introduction")
+            messages = self.config.generate_introduction_messages(
+                trace.to_string(), trace.query
+            )
+            logging.info("Generating introduction")
             return await self._generate_stream(messages, callback)
         except Exception as e:
             logging.error("Error generating introduction: %s", str(e))
@@ -153,12 +173,16 @@ class ReportBuilder:
 
     async def _generate_subtopics_stream(self, trace: Trace) -> List[str]:
         try:
-            messages = self.config.generate_subtopics_messages(trace.to_string(), trace.query)
-            response = await self.async_client.beta.chat.completions.parse(model=self.config.llm.report_model,
-                                                                           messages=messages,
-                                                                           temperature=self.config.llm.temperature,
-                                                                           top_p=self.config.llm.top_p,
-                                                                           response_format=Subtopics)
+            messages = self.config.generate_subtopics_messages(
+                trace.to_string(), trace.query
+            )
+            response = await self.async_client.beta.chat.completions.parse(
+                model=self.config.llm.report_model,
+                messages=messages,
+                temperature=self.config.llm.temperature,
+                top_p=self.config.llm.top_p,
+                response_format=Subtopics,
+            )
             subtopics = response.choices[0].message.parsed.subtopics
             logging.info(f"Subtopics: {json.dumps(subtopics)}")
             return subtopics
@@ -166,15 +190,22 @@ class ReportBuilder:
             logging.error("Error generating subtopics: %s", str(e))
             raise
 
-    async def _generate_subtopic_report_stream(self,
-                                               trace: Trace,
-                                               current_subtopic: str,
-                                               content_from_previous_subtopics: str,
-                                               subtopics: list[str],
-                                               callback: Optional[Callable[[str], None]] = None) -> str:
+    async def _generate_subtopic_report_stream(
+        self,
+        trace: Trace,
+        current_subtopic: str,
+        content_from_previous_subtopics: str,
+        subtopics: list[str],
+        callback: Optional[Callable[[str], None]] = None,
+    ) -> str:
         try:
-            messages = self.config.generate_subtopic_report_messages(trace.to_string(), content_from_previous_subtopics,
-                                                                     subtopics, current_subtopic, trace.query)
+            messages = self.config.generate_subtopic_report_messages(
+                trace.to_string(),
+                content_from_previous_subtopics,
+                subtopics,
+                current_subtopic,
+                trace.query,
+            )
             logging.info(f"Generating subtopic report: {current_subtopic}")
             return await self._generate_stream(messages, callback)
         except Exception as e:
@@ -184,8 +215,13 @@ class ReportBuilder:
     def _generate_references(self, tool_history: ToolHistory) -> str:
         try:
             url_markdown = "\n\n\n## References\n\n"
-            url_markdown += "".join(f"- [{url}]({url})\n" for url in tool_history.get_visited_urls())
-            url_markdown += "".join(f"- [{query}]({query})\n" for query in tool_history.get_searched_queries())
+            url_markdown += "".join(
+                f"- [{url}]({url})\n" for url in tool_history.get_visited_urls()
+            )
+            url_markdown += "".join(
+                f"- [{query}]({query})\n"
+                for query in tool_history.get_searched_queries()
+            )
             return url_markdown
         except Exception as e:
             logging.error("Error generating references: %s", str(e))
@@ -211,17 +247,23 @@ class ReportBuilder:
         try:
             url_markdown = "\n\n\n## References\n\n"
             if self.stream_event:
-                await self.stream_event("writing_report", {"final_report": url_markdown})
+                await self.stream_event(
+                    "writing_report", {"final_report": url_markdown}
+                )
                 await asyncio.sleep(0)
 
             # Stream URLs
-            for url in tool_history.get_visited_urls().union(tool_history.get_searched_queries()):
+            for url in tool_history.get_visited_urls().union(
+                tool_history.get_searched_queries()
+            ):
                 ref_line = f"- [{url}]({url})\n"
                 url_markdown += ref_line
                 if callback:
                     callback(ref_line)
                 if self.stream_event:
-                    await self.stream_event("writing_report", {"final_report": url_markdown})
+                    await self.stream_event(
+                        "writing_report", {"final_report": url_markdown}
+                    )
                     await asyncio.sleep(0)
             return url_markdown
         except Exception as e:
@@ -251,7 +293,9 @@ class ReportBuilder:
                     callback(content)
 
                 if self.stream_event:
-                    await self.stream_event("writing_report", {"final_report": full_content})
+                    await self.stream_event(
+                        "writing_report", {"final_report": full_content}
+                    )
                     await asyncio.sleep(0)
 
         return full_content
@@ -279,7 +323,9 @@ class ReportBuilder:
             Exception: If introduction generation fails
         """
         try:
-            messages = self.config.generate_introduction_messages(trace.to_string(), trace.query)
+            messages = self.config.generate_introduction_messages(
+                trace.to_string(), trace.query
+            )
             return self._generate_response(messages)
         except Exception as e:
             logging.error("Error generating introduction: %s", str(e))
@@ -298,20 +344,29 @@ class ReportBuilder:
             Exception: If subtopics generation fails
         """
         try:
-            messages = self.config.generate_subtopics_messages(trace.to_string(), trace.query)
-            response = self.client.beta.chat.completions.parse(model=self.config.llm.report_model,
-                                                               messages=messages,
-                                                               temperature=self.config.llm.temperature,
-                                                               top_p=self.config.llm.top_p,
-                                                               response_format=Subtopics)
+            messages = self.config.generate_subtopics_messages(
+                trace.to_string(), trace.query
+            )
+            response = self.client.beta.chat.completions.parse(
+                model=self.config.llm.report_model,
+                messages=messages,
+                temperature=self.config.llm.temperature,
+                top_p=self.config.llm.top_p,
+                response_format=Subtopics,
+            )
             subtopics = response.choices[0].message.parsed.subtopics
             return subtopics
         except Exception as e:
             logging.error("Error generating subtopics: %s", str(e))
             raise
 
-    def _generate_subtopic_report(self, trace: Trace, current_subtopic: str, content_from_previous_subtopics: str,
-                                  subtopics: List[str]) -> str:
+    def _generate_subtopic_report(
+        self,
+        trace: Trace,
+        current_subtopic: str,
+        content_from_previous_subtopics: str,
+        subtopics: List[str],
+    ) -> str:
         """Generate the report content for a specific subtopic.
 
         Args:
@@ -327,8 +382,13 @@ class ReportBuilder:
             Exception: If subtopic content generation fails
         """
         try:
-            messages = self.config.generate_subtopic_report_messages(trace.to_string(), content_from_previous_subtopics,
-                                                                     subtopics, current_subtopic, trace.query)
+            messages = self.config.generate_subtopic_report_messages(
+                trace.to_string(),
+                content_from_previous_subtopics,
+                subtopics,
+                current_subtopic,
+                trace.query,
+            )
             return self._generate_response(messages)
         except Exception as e:
             logging.error("Error generating subtopic report: %s", str(e))
