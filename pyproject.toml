@@ -28,6 +28,7 @@ dependencies = [
     "readability-lxml>=0.8.1",
     "lxml[html-clean]>=5.3.1",
     "tavily-python>=0.5.1",
+    "exa-py>=2.0.0",
     "colorama>=0.4.6",
     "langchain-community>=0.3.18",
     "yt-dlp>=2025.2.19",

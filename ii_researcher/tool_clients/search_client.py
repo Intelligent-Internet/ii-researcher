@@ -3,6 +3,7 @@ import re
 import urllib.parse
 
 import requests
+from exa_py import Exa
 from tavily import TavilyClient, MissingAPIKeyError, InvalidAPIKeyError
 
 
@@ -16,7 +17,7 @@ class SearchClient:
         Args:
             query: The search query to execute
             max_results: Maximum number of results to return
-            search_provider: The search provider to use ("serpapi" or "tavily")
+            search_provider: The search provider to use ("serpapi", "tavily", "jina", or "exa")
         """
         self.query = query
         self.max_results = max_results
@@ -79,6 +80,73 @@ class SearchClient:
 
         return search_response
 
+    def _search_query_by_exa(self, query, max_results=10):
+        """Searches the query using Exa AI search API.
+
+        Reads optional configuration from environment variables:
+            EXA_API_KEY: API key (required)
+            EXA_SEARCH_TYPE: search type, one of "auto", "neural", "fast",
+                "deep", "deep-lite", "deep-reasoning", "instant" (default: "auto")
+            EXA_CATEGORY: category filter (e.g. "news", "research paper",
+                "company", "personal site", "financial report", "people")
+            EXA_INCLUDE_DOMAINS: comma-separated list of domains to include
+            EXA_EXCLUDE_DOMAINS: comma-separated list of domains to exclude
+            EXA_INCLUDE_TEXT: phrase that must appear in result text
+            EXA_EXCLUDE_TEXT: phrase that must not appear in result text
+            EXA_START_PUBLISHED_DATE: ISO 8601 lower bound for publish date
+            EXA_END_PUBLISHED_DATE: ISO 8601 upper bound for publish date
+        """
+        exa_api_key = os.environ.get("EXA_API_KEY")
+        if not exa_api_key:
+            print("Error: EXA_API_KEY environment variable not set")
+            return []
+
+        try:
+            client = Exa(api_key=exa_api_key)
+            client.headers["x-exa-integration"] = "ii-researcher"
+
+            kwargs = {
+                "num_results": max_results,
+                "type": os.environ.get("EXA_SEARCH_TYPE", "auto"),
+                "text": True,
+                "highlights": True,
+            }
+            category = os.environ.get("EXA_CATEGORY")
+            if category:
+                kwargs["category"] = category
+            include_domains = _split_csv(os.environ.get("EXA_INCLUDE_DOMAINS"))
+            if include_domains:
+                kwargs["include_domains"] = include_domains
+            exclude_domains = _split_csv(os.environ.get("EXA_EXCLUDE_DOMAINS"))
+            if exclude_domains:
+                kwargs["exclude_domains"] = exclude_domains
+            include_text = os.environ.get("EXA_INCLUDE_TEXT")
+            if include_text:
+                kwargs["include_text"] = [include_text]
+            exclude_text = os.environ.get("EXA_EXCLUDE_TEXT")
+            if exclude_text:
+                kwargs["exclude_text"] = [exclude_text]
+            start_date = os.environ.get("EXA_START_PUBLISHED_DATE")
+            if start_date:
+                kwargs["start_published_date"] = start_date
+            end_date = os.environ.get("EXA_END_PUBLISHED_DATE")
+            if end_date:
+                kwargs["end_published_date"] = end_date
+
+            response = client.search_and_contents(query, **kwargs)
+
+            search_response = []
+            for result in response.results:
+                search_response.append({
+                    "title": getattr(result, "title", "") or "",
+                    "url": getattr(result, "url", "") or "",
+                    "content": _extract_exa_content(result),
+                })
+            return search_response
+        except Exception as e:
+            print(f"Error: {e}. Failed fetching sources from Exa.")
+            return []
+
     def _search_query_by_serp_api(self, query, max_results=10):
         """Searches the query using SerpAPI."""
 
@@ -132,8 +200,32 @@ class SearchClient:
             return self._search_query_by_serp_api(query, max_results)
         elif self.search_provider == "jina":
             return self._search_query_by_jina(query, max_results)
+        elif self.search_provider == "exa":
+            return self._search_query_by_exa(query, max_results)
         print(f"Error: Invalid search provider specified {self.search_provider}")
         return {}
+
+
+def _split_csv(value):
+    """Parse a comma-separated env var into a clean list, returning None if empty."""
+    if not value:
+        return None
+    items = [item.strip() for item in value.split(",") if item.strip()]
+    return items or None
+
+
+def _extract_exa_content(result):
+    """Build a content snippet from an Exa result, falling back across content types."""
+    highlights = getattr(result, "highlights", None)
+    if highlights:
+        return " ... ".join(highlights)
+    summary = getattr(result, "summary", None)
+    if summary:
+        return summary
+    text = getattr(result, "text", None)
+    if text:
+        return text
+    return ""
 
 
 def remove_all_line_breaks(text: str) -> str:
