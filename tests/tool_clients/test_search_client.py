@@ -17,6 +17,7 @@ class TestSearchClient(TestCase):
         self.mock_tavily_key = "test-tavily-key"
         self.mock_serp_key = "test-serp-key"
         self.mock_jina_key = "test-jina-key"
+        self.mock_exa_key = "test-exa-key"
 
     def test_init_default_values(self):
         """Test initialization with default values"""
@@ -171,6 +172,154 @@ class TestSearchClient(TestCase):
         """Test SerpAPI search with missing API key"""
         with patch.dict(os.environ, {"SERPAPI_API_KEY": ""}):
             client = SearchClient(search_provider="serpapi")
+            results = client.search(query=self.query)
+            self.assertEqual(results, [])
+
+    @patch("ii_researcher.tool_clients.search_client.Exa")
+    def test_exa_search(self, mock_exa):
+        """Test Exa search functionality with highlights returned."""
+        mock_result_1 = MagicMock()
+        mock_result_1.title = "Test1"
+        mock_result_1.url = "http://test1.com"
+        mock_result_1.highlights = ["Highlight 1a", "Highlight 1b"]
+        mock_result_1.summary = None
+        mock_result_1.text = "full text 1"
+
+        mock_result_2 = MagicMock()
+        mock_result_2.title = "Test2"
+        mock_result_2.url = "http://test2.com"
+        mock_result_2.highlights = ["Highlight 2"]
+        mock_result_2.summary = None
+        mock_result_2.text = "full text 2"
+
+        mock_response = MagicMock()
+        mock_response.results = [mock_result_1, mock_result_2]
+
+        mock_exa_instance = MagicMock()
+        mock_exa_instance.headers = {}
+        mock_exa_instance.search_and_contents.return_value = mock_response
+        mock_exa.return_value = mock_exa_instance
+
+        with patch.dict(os.environ, {"EXA_API_KEY": self.mock_exa_key}, clear=False):
+            client = SearchClient(search_provider="exa")
+            results = client.search(query=self.query, max_results=self.max_results)
+
+            expected_results = [
+                {
+                    "title": "Test1",
+                    "url": "http://test1.com",
+                    "content": "Highlight 1a ... Highlight 1b",
+                },
+                {
+                    "title": "Test2",
+                    "url": "http://test2.com",
+                    "content": "Highlight 2",
+                },
+            ]
+            self.assertEqual(results, expected_results)
+
+            mock_exa.assert_called_once_with(api_key=self.mock_exa_key)
+            self.assertEqual(
+                mock_exa_instance.headers.get("x-exa-integration"), "ii-researcher"
+            )
+            call_kwargs = mock_exa_instance.search_and_contents.call_args.kwargs
+            self.assertEqual(call_kwargs["num_results"], self.max_results)
+            self.assertTrue(call_kwargs["text"])
+            self.assertTrue(call_kwargs["highlights"])
+
+    @patch("ii_researcher.tool_clients.search_client.Exa")
+    def test_exa_search_content_fallback(self, mock_exa):
+        """Test Exa content extraction falls back through highlights -> summary -> text."""
+        # Result with no highlights, but a summary
+        result_summary = MagicMock()
+        result_summary.title = "SummaryOnly"
+        result_summary.url = "http://summary.com"
+        result_summary.highlights = []
+        result_summary.summary = "summary content"
+        result_summary.text = "ignored when summary present"
+
+        # Result with only text
+        result_text = MagicMock()
+        result_text.title = "TextOnly"
+        result_text.url = "http://text.com"
+        result_text.highlights = None
+        result_text.summary = None
+        result_text.text = "raw text content"
+
+        # Result with nothing
+        result_empty = MagicMock()
+        result_empty.title = "Empty"
+        result_empty.url = "http://empty.com"
+        result_empty.highlights = None
+        result_empty.summary = None
+        result_empty.text = None
+
+        mock_response = MagicMock()
+        mock_response.results = [result_summary, result_text, result_empty]
+
+        mock_exa_instance = MagicMock()
+        mock_exa_instance.headers = {}
+        mock_exa_instance.search_and_contents.return_value = mock_response
+        mock_exa.return_value = mock_exa_instance
+
+        with patch.dict(os.environ, {"EXA_API_KEY": self.mock_exa_key}, clear=False):
+            client = SearchClient(search_provider="exa")
+            results = client.search(query=self.query)
+
+            self.assertEqual(results[0]["content"], "summary content")
+            self.assertEqual(results[1]["content"], "raw text content")
+            self.assertEqual(results[2]["content"], "")
+
+    @patch("ii_researcher.tool_clients.search_client.Exa")
+    def test_exa_search_filters_from_env(self, mock_exa):
+        """Test Exa filter env vars are passed to search_and_contents."""
+        mock_response = MagicMock()
+        mock_response.results = []
+        mock_exa_instance = MagicMock()
+        mock_exa_instance.headers = {}
+        mock_exa_instance.search_and_contents.return_value = mock_response
+        mock_exa.return_value = mock_exa_instance
+
+        env = {
+            "EXA_API_KEY": self.mock_exa_key,
+            "EXA_SEARCH_TYPE": "neural",
+            "EXA_CATEGORY": "research paper",
+            "EXA_INCLUDE_DOMAINS": "arxiv.org, nature.com",
+            "EXA_EXCLUDE_DOMAINS": "example.com",
+            "EXA_INCLUDE_TEXT": "transformer",
+            "EXA_EXCLUDE_TEXT": "advertisement",
+            "EXA_START_PUBLISHED_DATE": "2024-01-01",
+            "EXA_END_PUBLISHED_DATE": "2024-12-31",
+        }
+        with patch.dict(os.environ, env, clear=False):
+            client = SearchClient(search_provider="exa")
+            client.search(query=self.query)
+
+        call_kwargs = mock_exa_instance.search_and_contents.call_args.kwargs
+        self.assertEqual(call_kwargs["type"], "neural")
+        self.assertEqual(call_kwargs["category"], "research paper")
+        self.assertEqual(call_kwargs["include_domains"], ["arxiv.org", "nature.com"])
+        self.assertEqual(call_kwargs["exclude_domains"], ["example.com"])
+        self.assertEqual(call_kwargs["include_text"], ["transformer"])
+        self.assertEqual(call_kwargs["exclude_text"], ["advertisement"])
+        self.assertEqual(call_kwargs["start_published_date"], "2024-01-01")
+        self.assertEqual(call_kwargs["end_published_date"], "2024-12-31")
+
+    @patch("ii_researcher.tool_clients.search_client.Exa")
+    def test_exa_search_missing_api_key(self, mock_exa):
+        """Test Exa search returns [] and does not call SDK when EXA_API_KEY is unset."""
+        with patch.dict(os.environ, {"EXA_API_KEY": ""}, clear=False):
+            client = SearchClient(search_provider="exa")
+            results = client.search(query=self.query)
+            self.assertEqual(results, [])
+            mock_exa.assert_not_called()
+
+    @patch("ii_researcher.tool_clients.search_client.Exa")
+    def test_exa_search_error(self, mock_exa):
+        """Test Exa search returns [] on SDK exception."""
+        mock_exa.side_effect = Exception("Boom")
+        with patch.dict(os.environ, {"EXA_API_KEY": self.mock_exa_key}, clear=False):
+            client = SearchClient(search_provider="exa")
             results = client.search(query=self.query)
             self.assertEqual(results, [])
 

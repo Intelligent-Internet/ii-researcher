@@ -15,7 +15,7 @@ We benchmarked on the [Frames dataset](https://huggingface.co/datasets/google/fr
 
 ## Features
 
-- 🔍 Intelligent web search using Tavily and SerpAPI search providers
+- 🔍 Intelligent web search using Tavily, SerpAPI, Jina, and Exa search providers
 - 🕸️ Web scraping and content extraction with multiple providers (Firecrawl, Browser, BS4, Tavily)
 - 🧠 Multi-step reasoning and reflection
 - ⚙️ Configurable LLM models for different tasks
@@ -67,6 +67,7 @@ pip install -e .
 export OPENAI_API_KEY="your-openai-api-key"
 export TAVILY_API_KEY="your-tavily-api-key" # set this api key when you select SEARCH_PROVIDER is tavily
 export SERPAPI_API_KEY="your-serpapi-api-key"  # set this api key when you select SEARCH_PROVIDER is serpapi
+export EXA_API_KEY="your-exa-api-key"  # set this api key when you select SEARCH_PROVIDER is exa
 export FIRECRAWL_API_KEY="your-firecrawl-api-key"  # set this api key when you select SCRAPER_PROVIDER is firecrawl
 
 # API Endpoints
@@ -79,7 +80,7 @@ export COMPRESS_MAX_OUTPUT_WORDS="4096"
 export COMPRESS_MAX_INPUT_WORDS="32000"
 
 # Search and Scraping Configuration
-export SEARCH_PROVIDER="serpapi"  # Options: 'serpapi' | 'tavily'
+export SEARCH_PROVIDER="serpapi"  # Options: 'serpapi' | 'tavily' | 'jina' | 'exa'
 export SCRAPER_PROVIDER="firecrawl"  # Options: 'firecrawl' | 'bs' | 'browser' | 'tavily_extract'
 
 # Timeouts and Performance Settings
