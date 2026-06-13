@@ -16,7 +16,7 @@ We benchmarked on the [Frames dataset](https://huggingface.co/datasets/google/fr
 ## Features
 
 - 🔍 Intelligent web search using Tavily and SerpAPI search providers
-- 🕸️ Web scraping and content extraction with multiple providers (Firecrawl, Browser, BS4, Tavily)
+- 🕸️ Web scraping and content extraction with multiple providers (Firecrawl, fastCRW, Browser, BS4, Tavily)
 - 🧠 Multi-step reasoning and reflection
 - ⚙️ Configurable LLM models for different tasks
 - ⚡ Asynchronous operation for better performance
@@ -68,6 +68,7 @@ export OPENAI_API_KEY="your-openai-api-key"
 export TAVILY_API_KEY="your-tavily-api-key" # set this api key when you select SEARCH_PROVIDER is tavily
 export SERPAPI_API_KEY="your-serpapi-api-key"  # set this api key when you select SEARCH_PROVIDER is serpapi
 export FIRECRAWL_API_KEY="your-firecrawl-api-key"  # set this api key when you select SCRAPER_PROVIDER is firecrawl
+export CRW_API_KEY="your-crw-api-key"  # set this api key when you select SEARCH_PROVIDER or SCRAPER_PROVIDER is crw
 
 # API Endpoints
 export OPENAI_BASE_URL="http://localhost:4000"
@@ -79,8 +80,8 @@ export COMPRESS_MAX_OUTPUT_WORDS="4096"
 export COMPRESS_MAX_INPUT_WORDS="32000"
 
 # Search and Scraping Configuration
-export SEARCH_PROVIDER="serpapi"  # Options: 'serpapi' | 'tavily'
-export SCRAPER_PROVIDER="firecrawl"  # Options: 'firecrawl' | 'bs' | 'browser' | 'tavily_extract'
+export SEARCH_PROVIDER="serpapi"  # Options: 'serpapi' | 'tavily' | 'jina' | 'crw'
+export SCRAPER_PROVIDER="firecrawl"  # Options: 'firecrawl' | 'crw' | 'bs' | 'browser' | 'tavily_extract'
 
 # Timeouts and Performance Settings
 export SEARCH_PROCESS_TIMEOUT="300"  # in seconds

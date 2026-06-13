@@ -14,6 +14,7 @@ from markdown import markdown
 
 from .beautiful_soup.beautiful_soup import BeautifulSoupScraper
 from .browser.browser import BrowserScraper
+from .crw.crw import CrwScraper
 from .firecrawl.firecrawl import FirecrawlScraper
 from .pymupdf.pymupdf import PyMuPDFScraper
 from .tavily_extract.tavily_extract import TavilyExtract
@@ -171,6 +172,7 @@ class Scraper:
             "tavily_extract": TavilyExtract,
             "youtube": YoutubeScraper,
             "firecrawl": FirecrawlScraper,
+            "crw": CrwScraper,
             "jina": JinaScraper,
         }
 

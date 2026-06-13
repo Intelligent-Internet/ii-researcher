@@ -16,7 +16,7 @@ class SearchClient:
         Args:
             query: The search query to execute
             max_results: Maximum number of results to return
-            search_provider: The search provider to use ("serpapi" or "tavily")
+            search_provider: The search provider to use ("serpapi", "tavily", "jina" or "crw")
         """
         self.query = query
         self.max_results = max_results
@@ -63,6 +63,39 @@ class SearchClient:
             response = requests.get(encoded_url, headers=headers)
             if response.status_code == 200:
                 search_results = response.json()["data"]
+                if search_results:
+                    for result in search_results:
+                        search_response.append(
+                            {
+                                "title": result.get("title", ""),
+                                "url": result.get("url", ""),
+                                "content": result.get("description", ""),
+                            }
+                        )
+                return search_response
+        except Exception as e:
+            print(f"Error: {e}. Failed fetching sources. Resulting in empty response.")
+            search_response = []
+
+        return search_response
+
+    def _search_query_by_crw(self, query, max_results=10):
+        """Searches the query using fastCRW (Firecrawl-compatible) search API."""
+        crw_api_key = os.environ.get("CRW_API_KEY")
+        base_url = os.environ.get("CRW_BASE_URL", "https://fastcrw.com/api")
+        url = base_url + "/v1/search"
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {crw_api_key}",
+        }
+        payload = {"query": query, "limit": max_results}
+
+        search_response = []
+        try:
+            response = requests.post(url, headers=headers, json=payload)
+            if response.status_code == 200:
+                search_results = response.json().get("data", [])
                 if search_results:
                     for result in search_results:
                         search_response.append(
@@ -132,6 +165,8 @@ class SearchClient:
             return self._search_query_by_serp_api(query, max_results)
         elif self.search_provider == "jina":
             return self._search_query_by_jina(query, max_results)
+        elif self.search_provider == "crw":
+            return self._search_query_by_crw(query, max_results)
         print(f"Error: Invalid search provider specified {self.search_provider}")
         return {}
 

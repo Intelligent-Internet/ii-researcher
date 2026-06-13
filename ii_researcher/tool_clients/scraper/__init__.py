@@ -1,5 +1,6 @@
 from .beautiful_soup.beautiful_soup import BeautifulSoupScraper
 from .browser.browser import BrowserScraper
+from .crw.crw import CrwScraper
 from .firecrawl.firecrawl import FirecrawlScraper
 from .pymupdf.pymupdf import PyMuPDFScraper
 from .scraper import Scraper
@@ -13,5 +14,6 @@ __all__ = [
     "TavilyExtract",
     "YoutubeScraper",
     "FirecrawlScraper",
+    "CrwScraper",
     "Scraper",
 ]

@@ -17,6 +17,7 @@ class TestSearchClient(TestCase):
         self.mock_tavily_key = "test-tavily-key"
         self.mock_serp_key = "test-serp-key"
         self.mock_jina_key = "test-jina-key"
+        self.mock_crw_key = "test-crw-key"
 
     def test_init_default_values(self):
         """Test initialization with default values"""
@@ -69,6 +70,58 @@ class TestSearchClient(TestCase):
 
             # Verify the API key was used in the request
             mock_get.assert_called_once()
+
+    @patch("requests.post")
+    def test_crw_search(self, mock_post):
+        """Test fastCRW (Firecrawl-compatible) search functionality"""
+        # Mock response data
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "success": True,
+            "data": [
+                {
+                    "title": "Test1",
+                    "url": "http://test1.com",
+                    "description": "Content 1",
+                },
+                {
+                    "title": "Test2",
+                    "url": "http://test2.com",
+                    "description": "Content 2",
+                },
+            ],
+        }
+        mock_post.return_value = mock_response
+
+        with patch.dict(os.environ, {"CRW_API_KEY": self.mock_crw_key}):
+            client = SearchClient(search_provider="crw")
+            results = client.search(query=self.query, max_results=self.max_results)
+
+            # Verify the results
+            expected_results = [
+                {"title": "Test1", "url": "http://test1.com", "content": "Content 1"},
+                {"title": "Test2", "url": "http://test2.com", "content": "Content 2"},
+            ]
+            self.assertEqual(results, expected_results[: self.max_results])
+
+            # Verify the API key was used in the request
+            mock_post.assert_called_once()
+            _, call_kwargs = mock_post.call_args
+            self.assertEqual(
+                call_kwargs["headers"]["Authorization"],
+                f"Bearer {self.mock_crw_key}",
+            )
+
+    @patch("requests.post")
+    def test_crw_search_error(self, mock_post):
+        """Test fastCRW search error handling"""
+        mock_post.side_effect = Exception("API Error")
+
+        with patch.dict(os.environ, {"CRW_API_KEY": self.mock_crw_key}):
+            client = SearchClient(search_provider="crw")
+            results = client.search(query=self.query)
+            self.assertEqual(results, [])
 
     @patch("ii_researcher.tool_clients.search_client.TavilyClient")
     def test_tavily_search(self, mock_tavily):
