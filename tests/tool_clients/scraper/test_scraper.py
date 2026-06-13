@@ -11,6 +11,7 @@ from ii_researcher.tool_clients.scraper.tavily_extract.tavily_extract import (
     TavilyExtract,
 )
 from ii_researcher.tool_clients.scraper.firecrawl.firecrawl import FirecrawlScraper
+from ii_researcher.tool_clients.scraper.crw.crw import CrwScraper
 from ii_researcher.tool_clients.scraper.browser.browser import BrowserScraper
 from ii_researcher.tool_clients.scraper.jina.jina import JinaScraper
 
@@ -256,6 +257,11 @@ class TestScraper:
         scraper = Scraper(["https://example.com"], "Mozilla/5.0", "firecrawl")
         scraper_class = scraper.get_scraper("https://example.com/page")
         assert scraper_class == FirecrawlScraper
+
+        # Test with Crw
+        scraper = Scraper(["https://example.com"], "Mozilla/5.0", "crw")
+        scraper_class = scraper.get_scraper("https://example.com/page")
+        assert scraper_class == CrwScraper
 
         # Test with Jina
         scraper = Scraper(["https://example.com"], "Mozilla/5.0", "jina")
