@@ -8,13 +8,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ii-researcher"
-version = "0.1.5"
+version = "0.1.6"
 description = "An open-source deep search agent that browses the web, reasons over what it finds, and writes comprehensive, referenced answers to hard questions."
 authors = [
     {name = "Intelligent Internet", email = "emad@ii.inc"},
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {file = "LICENSE"}
 keywords = [
     "ai",
@@ -79,7 +79,6 @@ dev = [
 
 [tool.setuptools]
 include-package-data = true
-packages.find.exclude = ["api.py"]
 
-[tool.setuptools.package-dir]
-"" = "."
+[tool.setuptools.packages.find]
+include = ["ii_researcher*"]
