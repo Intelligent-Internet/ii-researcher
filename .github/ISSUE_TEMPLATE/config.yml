@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/Intelligent-Internet/ii-researcher/security/advisories/new
+    about: Please report security vulnerabilities privately — never in a public issue.
+  - name: 📖 II-Researcher Blog Post
+    url: https://www.ii.inc/web/blog/post/ii-researcher
+    about: Read more about how II-Researcher works.

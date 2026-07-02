@@ -9,16 +9,36 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ii-researcher"
 version = "0.1.5"
-description = "II Researcher Package"
+description = "An open-source deep search agent that browses the web, reasons over what it finds, and writes comprehensive, referenced answers to hard questions."
 authors = [
     {name = "Intelligent Internet", email = "emad@ii.inc"},
 ]
 readme = "README.md"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
+keywords = [
+    "ai",
+    "agent",
+    "deep-research",
+    "web-search",
+    "llm",
+    "research-assistant",
+    "mcp",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 dependencies = [
-    "requests",
     "baml-py==0.77.0",
     "pydantic>=2.0.0",
     "fastapi>=0.100.0",
@@ -40,6 +60,13 @@ dependencies = [
     "uvicorn>=0.29.0",
     "baml-cli>=0.1.0"
 ]
+
+[project.urls]
+Homepage = "https://github.com/Intelligent-Internet/ii-researcher"
+Repository = "https://github.com/Intelligent-Internet/ii-researcher"
+Documentation = "https://github.com/Intelligent-Internet/ii-researcher#readme"
+"Blog Post" = "https://www.ii.inc/web/blog/post/ii-researcher"
+"Bug Tracker" = "https://github.com/Intelligent-Internet/ii-researcher/issues"
 
 [project.optional-dependencies]
 dev = [

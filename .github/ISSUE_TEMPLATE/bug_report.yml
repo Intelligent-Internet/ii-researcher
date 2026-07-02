@@ -1,0 +1,66 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in II-Researcher
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the sections below so we can reproduce and fix it quickly.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Set SEARCH_PROVIDER to '...'
+        2. Run `python ii_researcher/cli.py --question "..."`
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / error output
+      description: Paste any relevant logs or stack traces. This will be automatically formatted as code.
+      render: shell
+  - type: dropdown
+    id: interface
+    attributes:
+      label: How are you running II-Researcher?
+      options:
+        - CLI
+        - Web interface (frontend + API)
+        - Docker Compose
+        - MCP server
+        - As a Python library
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, ii-researcher version, and provider configuration (never include API keys!).
+      placeholder: |
+        - OS: Ubuntu 22.04
+        - Python: 3.11
+        - ii-researcher: 0.1.5
+        - SEARCH_PROVIDER: tavily
+        - SCRAPER_PROVIDER: firecrawl
+        - Model: deepseek-r1 via LiteLLM
+    validations:
+      required: true
