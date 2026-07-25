@@ -16,7 +16,7 @@ class SearchClient:
         Args:
             query: The search query to execute
             max_results: Maximum number of results to return
-            search_provider: The search provider to use ("serpapi" or "tavily")
+            search_provider: The search provider to use ("serpapi", "tavily", "jina", or "serpbase")
         """
         self.query = query
         self.max_results = max_results
@@ -112,6 +112,47 @@ class SearchClient:
 
         return search_response
 
+    def _search_query_by_serpbase(self, query, max_results=10):
+        """Searches the query using SerpBase Google Search API.
+
+        SerpBase is a Google Search Results API that returns structured
+        Google search data (organic results) via REST. Requires a
+        SERPBASE_API_KEY environment variable. Get a free key at
+        https://serpbase.dev
+        """
+        serpbase_api_key = os.environ.get("SERPBASE_API_KEY")
+        if not serpbase_api_key:
+            print(
+                "Warning: SERPBASE_API_KEY environment variable not set. "
+                "Skipping SerpBase search. Get a key at https://serpbase.dev"
+            )
+            return []
+
+        url = "https://api.serpbase.dev/google/search"
+        params = {"q": query, "num": max_results, "api_key": serpbase_api_key}
+        search_response = []
+        try:
+            response = requests.get(url, params=params)
+            if response.status_code == 200:
+                data = response.json()
+                results = data.get("organic_results", [])
+                for result in results[:max_results]:
+                    search_response.append(
+                        {
+                            "title": result.get("title", ""),
+                            "url": result.get("link", ""),
+                            "content": result.get("snippet", ""),
+                        }
+                    )
+        except Exception as e:
+            print(
+                f"Error: {e}. Failed fetching sources from SerpBase. "
+                "Resulting in empty response."
+            )
+            search_response = []
+
+        return search_response
+
     def search(self, query=None, max_results=None):
         """
         Execute search using configured provider or provided parameters.
@@ -132,6 +173,8 @@ class SearchClient:
             return self._search_query_by_serp_api(query, max_results)
         elif self.search_provider == "jina":
             return self._search_query_by_jina(query, max_results)
+        elif self.search_provider == "serpbase":
+            return self._search_query_by_serpbase(query, max_results)
         print(f"Error: Invalid search provider specified {self.search_provider}")
         return {}
 
