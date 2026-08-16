@@ -403,4 +403,4 @@ II-Researcher is inspired by and built with the support of the open-source commu
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Intelligent-Internet/ii-researcher&type=Date)](https://star-history.com/#Intelligent-Internet/ii-researcher&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=Intelligent-Internet/ii-researcher&type=Date)](https://star-history.dera.page/#Intelligent-Internet/ii-researcher&type=Date)
