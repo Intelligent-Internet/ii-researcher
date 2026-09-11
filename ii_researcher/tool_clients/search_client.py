@@ -16,7 +16,7 @@ class SearchClient:
         Args:
             query: The search query to execute
             max_results: Maximum number of results to return
-            search_provider: The search provider to use ("serpapi" or "tavily")
+            search_provider: The search provider to use ("serpapi", "tavily", "jina", or "youcom")
         """
         self.query = query
         self.max_results = max_results
@@ -79,6 +79,45 @@ class SearchClient:
 
         return search_response
 
+    def _search_query_by_youcom(self, query, max_results=10):
+        """Searches the query using the You.com Search API."""
+        youcom_api_key = os.environ.get("YDC_API_KEY")
+        if not youcom_api_key:
+            print("Error: YDC_API_KEY environment variable not set")
+            return []
+
+        url = "https://api.ydc-index.io/search"
+        params = {"query": query}
+        headers = {"X-API-Key": youcom_api_key}
+
+        search_response = []
+        try:
+            response = requests.get(url, params=params, headers=headers)
+            if response.status_code == 200:
+                search_results = response.json().get("hits", [])
+                for result in search_results:
+                    search_response.append(
+                        {
+                            "title": result.get("title", ""),
+                            "url": result.get("url", ""),
+                            "content": result.get("snippets", [""])[0]
+                            if result.get("snippets")
+                            else "",
+                        }
+                    )
+                    if len(search_response) >= max_results:
+                        break
+            else:
+                print(
+                    f"Error: You.com API returned status {response.status_code}. "
+                    "Failed fetching sources from You.com."
+                )
+        except Exception as e:
+            print(f"Error: {e}. Failed fetching sources. Resulting in empty response.")
+            search_response = []
+
+        return search_response
+
     def _search_query_by_serp_api(self, query, max_results=10):
         """Searches the query using SerpAPI."""
 
@@ -132,6 +171,8 @@ class SearchClient:
             return self._search_query_by_serp_api(query, max_results)
         elif self.search_provider == "jina":
             return self._search_query_by_jina(query, max_results)
+        elif self.search_provider == "youcom":
+            return self._search_query_by_youcom(query, max_results)
         print(f"Error: Invalid search provider specified {self.search_provider}")
         return {}
 

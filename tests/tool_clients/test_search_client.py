@@ -17,6 +17,7 @@ class TestSearchClient(TestCase):
         self.mock_tavily_key = "test-tavily-key"
         self.mock_serp_key = "test-serp-key"
         self.mock_jina_key = "test-jina-key"
+        self.mock_youcom_key = "test-youcom-key"
 
     def test_init_default_values(self):
         """Test initialization with default values"""
@@ -126,6 +127,62 @@ class TestSearchClient(TestCase):
 
             # Verify the client was initialized
             mock_tavily.assert_called_once_with("invalid-key")
+
+    @patch("requests.get")
+    def test_youcom_search(self, mock_get):
+        """Test You.com search functionality"""
+        # Mock response data
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "hits": [
+                {
+                    "title": "Test1",
+                    "url": "http://test1.com",
+                    "snippets": ["Content 1"],
+                },
+                {
+                    "title": "Test2",
+                    "url": "http://test2.com",
+                    "snippets": ["Content 2"],
+                },
+            ]
+        }
+        mock_get.return_value = mock_response
+
+        with patch.dict(os.environ, {"YDC_API_KEY": self.mock_youcom_key}):
+            client = SearchClient(search_provider="youcom")
+            results = client.search(query=self.query, max_results=self.max_results)
+
+            # Verify the results
+            expected_results = [
+                {"title": "Test1", "url": "http://test1.com", "content": "Content 1"},
+                {"title": "Test2", "url": "http://test2.com", "content": "Content 2"},
+            ]
+            self.assertEqual(results, expected_results[: self.max_results])
+
+            # Verify the API key was used in the request headers
+            mock_get.assert_called_once()
+            self.assertEqual(
+                mock_get.call_args[1]["headers"]["X-API-Key"], self.mock_youcom_key
+            )
+
+    @patch("requests.get")
+    def test_youcom_search_error(self, mock_get):
+        """Test You.com search error handling"""
+        mock_get.side_effect = Exception("API Error")
+
+        with patch.dict(os.environ, {"YDC_API_KEY": self.mock_youcom_key}):
+            client = SearchClient(search_provider="youcom")
+            results = client.search(query=self.query)
+            self.assertEqual(results, [])
+
+    def test_youcom_search_missing_api_key(self):
+        """Test You.com search with missing API key"""
+        with patch.dict(os.environ, {"YDC_API_KEY": ""}):
+            client = SearchClient(search_provider="youcom")
+            results = client.search(query=self.query)
+            self.assertEqual(results, [])
 
     @patch("requests.get")
     def test_serpapi_search(self, mock_get):

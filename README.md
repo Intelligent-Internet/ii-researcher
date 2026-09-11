@@ -56,7 +56,7 @@ For the design story and evaluation details, read our [blog post](https://www.ii
 
 ## ✨ Features
 
-- 🔍 **Intelligent web search** with pluggable providers (Tavily, SerpAPI, Jina)
+- 🔍 **Intelligent web search** with pluggable providers (Tavily, SerpAPI, Jina, You.com)
 - 🕸️ **Web scraping and content extraction** with multiple providers (Firecrawl, Browser, BeautifulSoup, Tavily Extract, Jina), including PDF and YouTube handling
 - 🧠 **Multi-step reasoning and reflection** — the agent thinks, acts, and self-corrects until it has enough evidence
 - 🗜️ **Context compression** — embedding-based and LLM-based compressors keep long pages within the model's context window
@@ -100,7 +100,7 @@ flowchart TB
         THINK["Multi-step reasoning loop:<br/>think → act → reflect"]
     end
 
-    AGENT --> SEARCH["Web Search<br/>SerpAPI · Tavily · Jina"]
+    AGENT --> SEARCH["Web Search<br/>SerpAPI · Tavily · Jina · You.com"]
     AGENT --> SCRAPE["Page Visit<br/>Firecrawl · Browser · BeautifulSoup · Tavily Extract · Jina"]
     SCRAPE --> COMPRESS["Context Compression<br/>embedding-based + LLM-based"]
     SEARCH --> AGENT
@@ -113,7 +113,7 @@ flowchart TB
 **How it works:**
 
 1. The **reasoning agent** receives a question and enters a think–act–reflect loop, streaming its reasoning tokens as it goes.
-2. At each step it can call tools: **web search** (SerpAPI, Tavily, or Jina) and **page visit** (Firecrawl, headless browser, BeautifulSoup, Tavily Extract, or Jina — with dedicated handling for PDFs and YouTube).
+2. At each step it can call tools: **web search** (SerpAPI, Tavily, Jina, or You.com) and **page visit** (Firecrawl, headless browser, BeautifulSoup, Tavily Extract, or Jina — with dedicated handling for PDFs and YouTube).
 3. Retrieved content passes through **context compression** (embedding similarity filtering, optionally an LLM compressor) so only the most relevant material enters the model's context.
 4. When the agent has gathered enough evidence, the **report builder** writes the final answer with references, in `basic` or `advanced` form.
 5. All model calls route through a **LiteLLM proxy**, so any OpenAI-compatible model — commercial or self-hosted — can power every stage.
@@ -149,13 +149,14 @@ pip install -e .
 export OPENAI_API_KEY="your-openai-api-key"
 export TAVILY_API_KEY="your-tavily-api-key"       # required when SEARCH_PROVIDER=tavily
 export SERPAPI_API_KEY="your-serpapi-api-key"     # required when SEARCH_PROVIDER=serpapi
+export YDC_API_KEY="your-youcom-api-key"          # required when SEARCH_PROVIDER=youcom
 export FIRECRAWL_API_KEY="your-firecrawl-api-key" # required when SCRAPER_PROVIDER=firecrawl
 
 # API Endpoints
 export OPENAI_BASE_URL="http://localhost:4000"
 
 # Search and scraping providers
-export SEARCH_PROVIDER="serpapi"    # Options: 'serpapi' | 'tavily' | 'jina'
+export SEARCH_PROVIDER="serpapi"    # Options: 'serpapi' | 'tavily' | 'jina' | 'youcom'
 export SCRAPER_PROVIDER="firecrawl" # Options: 'firecrawl' | 'bs' | 'browser' | 'tavily_extract' | 'jina'
 
 # Context compression
