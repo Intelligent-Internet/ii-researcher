@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 import urllib.parse
@@ -16,7 +17,7 @@ class SearchClient:
         Args:
             query: The search query to execute
             max_results: Maximum number of results to return
-            search_provider: The search provider to use ("serpapi" or "tavily")
+            search_provider: The search provider to use ("serpapi", "tavily", "jina" or "parallel")
         """
         self.query = query
         self.max_results = max_results
@@ -130,10 +131,26 @@ class SearchClient:
             return self._search_query_by_tavily(query, max_results)
         elif self.search_provider == "serpapi":
             return self._search_query_by_serp_api(query, max_results)
+        elif self.search_provider == "parallel":
+            return asyncio.run(self.search_async(query, max_results))
         elif self.search_provider == "jina":
             return self._search_query_by_jina(query, max_results)
         print(f"Error: Invalid search provider specified {self.search_provider}")
         return {}
+
+    async def search_async(self, query=None, max_results=None):
+        """Search with Parallel on the caller's event loop, preserving cancellation."""
+        from ii_researcher.tool_clients.parallel_search import search_parallel
+
+        query = query or self.query
+        max_results = max_results or self.max_results
+        if not query:
+            return []
+        try:
+            return await search_parallel(query, max_results)
+        except Exception as e:
+            print(f"Error: {e}. Failed fetching sources from Parallel.")
+            return []
 
 
 def remove_all_line_breaks(text: str) -> str:
