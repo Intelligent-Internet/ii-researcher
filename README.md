@@ -155,7 +155,7 @@ export FIRECRAWL_API_KEY="your-firecrawl-api-key" # required when SCRAPER_PROVID
 export OPENAI_BASE_URL="http://localhost:4000"
 
 # Search and scraping providers
-export SEARCH_PROVIDER="serpapi"    # Options: 'serpapi' | 'tavily' | 'jina'
+export SEARCH_PROVIDER="serpapi"    # Options: 'serpapi' | 'tavily' | 'jina' | 'parallel'
 export SCRAPER_PROVIDER="firecrawl" # Options: 'firecrawl' | 'bs' | 'browser' | 'tavily_extract' | 'jina'
 
 # Context compression
@@ -176,6 +176,19 @@ export R_TEMPERATURE=0.2         # temperature for the reasoning model
 export R_REPORT_MODEL=gpt-4o     # model used for writing the final report
 export R_PRESENCE_PENALTY=0      # presence_penalty for the reasoning model
 ```
+
+Optional keyless search via [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp):
+
+```bash
+export SEARCH_PROVIDER="parallel"
+```
+
+This uses the anonymous Streamable HTTP endpoint at `https://search.parallel.ai/mcp`.
+No Parallel API key is needed. Free access has rate limits and is intended for exploration
+and light use. `SEARCH_QUERY_TIMEOUT` bounds each search, including the MCP handshake.
+Results retain titles, URLs and excerpts, capped by the configured search result count.
+Your reasoning models and scraping provider still need their usual configuration.
+The existing default search provider remains SerpAPI.
 
 Optional — LLM-based context compression (better compression quality):
 

@@ -62,7 +62,10 @@ class WebSearchTool(BaseTool):
                     search_provider=config.tool.search_provider,
                 )
 
-                results = search_tool.search()
+                if search_tool.search_provider == "parallel":
+                    results = await search_tool.search_async()
+                else:
+                    results = search_tool.search()
 
                 # Format the results
                 result_str += f"Query: {query}\n"
